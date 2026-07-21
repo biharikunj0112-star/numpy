@@ -54,8 +54,6 @@ from numpy._typing import (  # type: ignore[deprecated]
     _ScalarLike_co,
     # `number` precision
     NBitBase,
-    # NOTE: Do not remove the extended precision bit-types even if seemingly unused;
-    # they're used by the mypy plugin
     _128Bit,
     _96Bit,
     _64Bit,
@@ -68,9 +66,6 @@ from numpy._typing import (  # type: ignore[deprecated]
     _NBitIntP,
     _NBitLong,
     _NBitLongLong,
-    _NBitHalf,
-    _NBitSingle,
-    _NBitDouble,
     _NBitLongDouble,
     # Character codes
     _BoolCodes,
@@ -111,9 +106,7 @@ from numpy._typing import (  # type: ignore[deprecated]
     _InexactCodes,
     _CharacterCodes,
     # Ufuncs
-    _UFunc_Nin1_Nout1,
     _UFunc_Nin2_Nout1,
-    _UFunc_Nin1_Nout2,
     _UFunc_Nin2_Nout2,
     _GUFunc_Nin2_Nout1,
 )
@@ -125,14 +118,6 @@ from numpy._typing._char_codes import (
     _TD64Codes_any,
     _TD64Codes_int,
     _TD64Codes_timedelta,
-)
-
-# NOTE: Numpy's mypy plugin is used for removing the types unavailable to the specific platform
-from numpy._typing._extended_precision import (
-    float96,
-    float128,
-    complex192,
-    complex256,
 )
 
 from numpy._array_api_info import __array_namespace_info__
@@ -389,6 +374,102 @@ from numpy._core.shape_base import (
     stack,
     vstack,
     unstack,
+)
+from numpy._core.umath import (
+    absolute,
+    absolute as abs,
+    arccos,
+    arccos as acos,
+    arccosh,
+    arccosh as acosh,
+    arcsin,
+    arcsin as asin,
+    arcsinh,
+    arcsinh as asinh,
+    arctan,
+    arctan as atan,
+    arctan2,
+    arctan2 as atan2,
+    arctanh,
+    arctanh as atanh,
+    bitwise_and,
+    bitwise_count,
+    bitwise_or,
+    bitwise_xor,
+    cbrt,
+    ceil,
+    conjugate,
+    conjugate as conj,
+    copysign,
+    cos,
+    cosh,
+    deg2rad,
+    degrees,
+    divide,
+    divide as true_divide,
+    equal,
+    exp,
+    exp2,
+    expm1,
+    fabs,
+    float_power,
+    floor,
+    floor_divide,
+    fmod,
+    frexp,
+    gcd,
+    greater,
+    greater_equal,
+    heaviside,
+    hypot,
+    invert,
+    invert as bitwise_invert,
+    invert as bitwise_not,
+    isfinite,
+    isinf,
+    isnan,
+    isnat,
+    lcm,
+    ldexp,
+    left_shift,
+    left_shift as bitwise_left_shift,
+    less,
+    less_equal,
+    log,
+    log10,
+    log1p,
+    log2,
+    logaddexp,
+    logaddexp2,
+    logical_and,
+    logical_not,
+    logical_or,
+    logical_xor,
+    mod,
+    modf,
+    nextafter,
+    not_equal,
+    positive,
+    power,
+    power as pow,
+    negative,
+    rad2deg,
+    radians,
+    reciprocal,
+    remainder,
+    right_shift,
+    right_shift as bitwise_right_shift,
+    rint,
+    sign,
+    signbit,
+    sin,
+    sinh,
+    spacing,
+    square,
+    sqrt,
+    tan,
+    tanh,
+    trunc,
 )
 
 from ._expired_attrs_2_0 import __expired_attributes__ as __expired_attributes__
@@ -739,7 +820,10 @@ type _Truthy = L[True, 1] | bool_[L[True]]
 
 type _1D = tuple[int]
 type _2D = tuple[int, int]
+type _3D = tuple[int, int, int]
+
 type _2Tuple[T] = tuple[T, T]
+type _3Tuple[T] = tuple[T, T, T]
 
 type _ArrayUInt_co = NDArray[unsignedinteger | bool_]
 type _ArrayInt_co = NDArray[integer | bool_]
@@ -783,10 +867,6 @@ type _BuiltinObjectLike = (
     | dt.date | dt.time | dt.timedelta | dt.tzinfo
     | tuple[Any, ...] | list[Any] | set[Any] | frozenset[Any] | dict[Any, Any]
 )  # fmt: skip
-
-# Introduce an alias for `dtype` to avoid naming conflicts.
-# NOTE: This should _not_ be `Final[_]`, `_: TypeAlias`, or `type _`
-_dtype = dtype
 
 type _ByteOrderChar = L["<", ">", "=", "|"]
 # can be anything, is case-insensitive, and only the first character matters
@@ -870,7 +950,7 @@ type _DTypeNum = L[
 ]
 type _DTypeBuiltinKind = L[0, 1, 2]
 
-type _ArrayAPIVersion = L["2021.12", "2022.12", "2023.12", "2024.12"]
+type _ArrayAPIVersion = L["2021.12", "2022.12", "2023.12", "2024.12", "2025.12"]
 
 type _CastingKind = L["no", "equiv", "safe", "same_kind", "same_value", "unsafe"]
 
@@ -945,7 +1025,7 @@ type _TimeUnit = L[_NativeTimeUnit, _IntTimeUnit]
 type _NativeTD64Unit = L[_DayUnit, _NativeTimeUnit]
 type _IntTD64Unit = L[_MonthUnit, _IntTimeUnit]
 type _TD64Unit = L[_DateUnit, _TimeUnit]
-type _TimeUnitSpec[UnitT: _TD64Unit] = _TD64Unit | tuple[_TD64Unit, SupportsIndex]
+type _TimeUnitSpec[UnitT: _TD64Unit] = UnitT | tuple[UnitT, SupportsIndex]
 
 ### TypedDict's (for internal use only)
 
@@ -1067,7 +1147,7 @@ __NUMPY_SETUP__: Final[L[False]] = False
 __numpy_submodules__: Final[set[LiteralString]] = ...
 __former_attrs__: Final[_FormerAttrsDict] = ...
 __future_scalars__: Final[set[L["bytes", "str", "object"]]] = ...
-__array_api_version__: Final[L["2024.12"]] = "2024.12"
+__array_api_version__: Final[L["2025.12"]] = "2025.12"
 test: Final[PytestTester] = ...
 
 @type_check_only
@@ -1084,7 +1164,7 @@ class _DTypeMeta(type):
     def _legacy(cls, /) -> bool: ...
 
 @final
-class dtype(Generic[_ScalarT_co], metaclass=_DTypeMeta):  # noqa: UP046
+class dtype(Generic[_ScalarT_co], metaclass=_DTypeMeta):
     names: tuple[py_str, ...] | None
     def __hash__(self) -> int: ...
 
@@ -1650,6 +1730,10 @@ class dtype(Generic[_ScalarT_co], metaclass=_DTypeMeta):  # noqa: UP046
     @property
     def type(self) -> py_type[_ScalarT_co]: ...
 
+# Introduce an alias for `dtype` to avoid naming conflicts.
+# NOTE: This should _not_ be `Final[_]`, `_: TypeAlias`, or `type _`
+_dtype = dtype
+
 @type_check_only
 class _ArrayOrScalarCommon:
     @property
@@ -1730,6 +1814,7 @@ class _ArrayOrScalarCommon:
         order: str | Sequence[str] | None = ...,
         *,
         stable: py_bool | None = ...,
+        descending: py_bool | None = ...,
     ) -> NDArray[intp]: ...
 
     @overload  # axis=None (default), out=None (default), keepdims=False (default)
@@ -1796,7 +1881,7 @@ class _ArrayOrScalarCommon:
         self, /, condition: _ArrayLikeInt_co, axis: SupportsIndex | None = None, *, out: ArrayT
     ) -> ArrayT: ...
 
-    # Keep in sync with `MaskedArray.cumprod`
+    #
     @overload  # out: None (default)
     def cumprod(self, /, axis: SupportsIndex | None = None, dtype: DTypeLike | None = None, out: None = None) -> NDArray[Any]: ...
     @overload  # out: ndarray
@@ -1806,7 +1891,7 @@ class _ArrayOrScalarCommon:
         self, /, axis: SupportsIndex | None = None, dtype: DTypeLike | None = None, *, out: ArrayT
     ) -> ArrayT: ...
 
-    # Keep in sync with `MaskedArray.cumsum`
+    #
     @overload  # out: None (default)
     def cumsum(self, /, axis: SupportsIndex | None = None, dtype: DTypeLike | None = None, out: None = None) -> NDArray[Any]: ...
     @overload  # out: ndarray
@@ -2113,6 +2198,7 @@ class ndarray(_ArrayOrScalarCommon, Generic[_ShapeT_co, _DTypeT_co]):
         self,
         ufunc: ufunc,
         method: L["__call__", "reduce", "reduceat", "accumulate", "outer", "at"],
+        /,
         *inputs: Any,
         **kwargs: Any,
     ) -> Any: ...
@@ -2264,78 +2350,1342 @@ class ndarray(_ArrayOrScalarCommon, Generic[_ShapeT_co, _DTypeT_co]):
     @overload
     def transpose(self, /, *axes: SupportsIndex) -> Self: ...
 
+    # keep in sync with `ndarray.argmin` (below) and `ma.MaskedArray.argmax`
+    @override  # type: ignore[override]
+    @overload
+    def argmax(
+        self,
+        axis: None = None,
+        out: None = None,
+        *,
+        keepdims: L[False] = False,
+    ) -> intp: ...
+    @overload  # axis: <given>
+    def argmax(
+        self,
+        axis: SupportsIndex,
+        out: None = None,
+        *,
+        keepdims: L[False] = False,
+    ) -> NDArray[intp]: ...
+    @overload  # keepdims: True
+    def argmax(
+        self,
+        axis: SupportsIndex | None = None,
+        out: None = None,
+        *,
+        keepdims: L[True],
+    ) -> ndarray[_ShapeT_co, _dtype[intp]]: ...
+    @overload  # out: <given>  (keyword)
+    def argmax[ArrayT: NDArray[intp]](
+        self,
+        axis: SupportsIndex | None = None,
+        *,
+        out: ArrayT,
+        keepdims: py_bool = False,
+    ) -> ArrayT: ...
+    @overload  # out: <given>  (positional)
+    def argmax[ArrayT: NDArray[intp]](  # pyright: ignore[reportIncompatibleMethodOverride]
+        self,
+        axis: SupportsIndex | None,
+        out: ArrayT,
+        *,
+        keepdims: py_bool = False,
+    ) -> ArrayT: ...
+
+    # keep in sync with `ndarray.argmax` (above) and `ma.MaskedArray.argmin`
+    @override  # type: ignore[override]
+    @overload
+    def argmin(
+        self,
+        axis: None = None,
+        out: None = None,
+        *,
+        keepdims: L[False] = False,
+    ) -> intp: ...
+    @overload  # axis: <given>
+    def argmin(
+        self,
+        axis: SupportsIndex,
+        out: None = None,
+        *,
+        keepdims: L[False] = False,
+    ) -> NDArray[intp]: ...
+    @overload  # keepdims: True
+    def argmin(
+        self,
+        axis: SupportsIndex | None = None,
+        out: None = None,
+        *,
+        keepdims: L[True],
+    ) -> ndarray[_ShapeT_co, _dtype[intp]]: ...
+    @overload  # out: <given>  (keyword)
+    def argmin[ArrayT: NDArray[intp]](
+        self,
+        axis: SupportsIndex | None = None,
+        *,
+        out: ArrayT,
+        keepdims: py_bool = False,
+    ) -> ArrayT: ...
+    @overload  # out: <given>  (positional)
+    def argmin[ArrayT: NDArray[intp]](  # pyright: ignore[reportIncompatibleMethodOverride]
+        self,
+        axis: SupportsIndex | None,
+        out: ArrayT,
+        *,
+        keepdims: py_bool = False,
+    ) -> ArrayT: ...
+
+    #
+    # keep in sync with `ndarray.any` (below)
     @overload
     def all(
         self,
         axis: None = None,
         out: None = None,
-        keepdims: L[False, 0] = False,
+        keepdims: L[False] = False,
         *,
         where: _ArrayLikeBool_co = True
     ) -> bool_: ...
-    @overload
+    @overload  # axis: <given>
+    def all(
+        self,
+        axis: int | tuple[int, ...],
+        out: None = None,
+        keepdims: L[False] = False,
+        *,
+        where: _ArrayLikeBool_co = True,
+    ) -> NDArray[bool_]: ...
+    @overload  # keepdims: True
     def all(
         self,
         axis: int | tuple[int, ...] | None = None,
         out: None = None,
-        keepdims: SupportsIndex = False,
         *,
+        keepdims: L[True],
         where: _ArrayLikeBool_co = True,
-    ) -> bool_ | NDArray[bool_]: ...
-    @overload
-    def all[ArrayT: ndarray](
-        self,
-        axis: int | tuple[int, ...] | None,
-        out: ArrayT,
-        keepdims: SupportsIndex = False,
-        *,
-        where: _ArrayLikeBool_co = True,
-    ) -> ArrayT: ...
-    @overload
+    ) -> ndarray[_ShapeT_co, _dtype[bool_]]: ...
+    @overload  # out: <given> (keyword)
     def all[ArrayT: ndarray](
         self,
         axis: int | tuple[int, ...] | None = None,
         *,
         out: ArrayT,
-        keepdims: SupportsIndex = False,
+        keepdims: py_bool = False,
+        where: _ArrayLikeBool_co = True,
+    ) -> ArrayT: ...
+    @overload  # out: <given> (positional)
+    def all[ArrayT: ndarray](
+        self,
+        axis: int | tuple[int, ...] | None,
+        out: ArrayT,
+        keepdims: py_bool = False,
+        *,
         where: _ArrayLikeBool_co = True,
     ) -> ArrayT: ...
 
+    # keep in sync with `ndarray.all` (above)
     @overload
     def any(
         self,
         axis: None = None,
         out: None = None,
-        keepdims: L[False, 0] = False,
+        keepdims: L[False] = False,
         *,
         where: _ArrayLikeBool_co = True
     ) -> bool_: ...
-    @overload
+    @overload  # axis: <given>
+    def any(
+        self,
+        axis: int | tuple[int, ...],
+        out: None = None,
+        keepdims: L[False] = False,
+        *,
+        where: _ArrayLikeBool_co = True,
+    ) -> NDArray[bool_]: ...
+    @overload  # keepdims: True
     def any(
         self,
         axis: int | tuple[int, ...] | None = None,
         out: None = None,
-        keepdims: SupportsIndex = False,
         *,
+        keepdims: L[True],
         where: _ArrayLikeBool_co = True,
-    ) -> bool_ | NDArray[bool_]: ...
-    @overload
-    def any[ArrayT: ndarray](
-        self,
-        axis: int | tuple[int, ...] | None,
-        out: ArrayT,
-        keepdims: SupportsIndex = False,
-        *,
-        where: _ArrayLikeBool_co = True,
-    ) -> ArrayT: ...
-    @overload
+    ) -> ndarray[_ShapeT_co, _dtype[bool_]]: ...
+    @overload  # out: <given> (keyword)
     def any[ArrayT: ndarray](
         self,
         axis: int | tuple[int, ...] | None = None,
         *,
         out: ArrayT,
-        keepdims: SupportsIndex = False,
+        keepdims: py_bool = False,
         where: _ArrayLikeBool_co = True,
+    ) -> ArrayT: ...
+    @overload  # out: <given> (positional)
+    def any[ArrayT: ndarray](
+        self,
+        axis: int | tuple[int, ...] | None,
+        out: ArrayT,
+        keepdims: py_bool = False,
+        *,
+        where: _ArrayLikeBool_co = True,
+    ) -> ArrayT: ...
+
+    # keep in sync with `sum` below (but without `timedelta64`)
+    @override  # type: ignore[override]
+    @overload  # ~inexact
+    def prod[ScalarT: inexact](
+        self: NDArray[ScalarT],
+        axis: None = None,
+        dtype: None = None,
+        out: None = None,
+        *,
+        keepdims: L[False] | _NoValueType = ...,
+        initial: _NumberLike_co | _NoValueType = ...,
+        where: _ArrayLikeBool_co | _NoValueType = ...,
+    ) -> ScalarT: ...
+    @overload  # ~inexact | object_, axis: <given>
+    def prod[ScalarT: inexact | object_](
+        self: NDArray[ScalarT],
+        axis: int | tuple[int, ...],
+        dtype: None = None,
+        out: None = None,
+        *,
+        keepdims: L[False] | _NoValueType = ...,
+        initial: _NumberLike_co | _NoValueType = ...,
+        where: _ArrayLikeBool_co | _NoValueType = ...,
+    ) -> NDArray[ScalarT]: ...
+    @overload  # ~inexact | object_, keepdims=True
+    def prod[ArrayT: NDArray[inexact | object_]](
+        self: ArrayT,
+        axis: int | tuple[int, ...] | None = None,
+        dtype: None = None,
+        out: None = None,
+        *,
+        keepdims: L[True],
+        initial: _NumberLike_co | _NoValueType = ...,
+        where: _ArrayLikeBool_co | _NoValueType = ...,
+    ) -> ArrayT: ...
+    @overload  # +integer
+    def prod(
+        self: NDArray[integer | bool_],
+        axis: None = None,
+        dtype: None = None,
+        out: None = None,
+        *,
+        keepdims: L[False] | _NoValueType = ...,
+        initial: _IntLike_co | _NoValueType = ...,
+        where: _ArrayLikeBool_co | _NoValueType = ...,
+    ) -> int_: ...
+    @overload  # +integer, axis: <given>
+    def prod(
+        self: NDArray[integer | bool_],
+        axis: int | tuple[int, ...],
+        dtype: None = None,
+        out: None = None,
+        *,
+        keepdims: L[False] | _NoValueType = ...,
+        initial: _IntLike_co | _NoValueType = ...,
+        where: _ArrayLikeBool_co | _NoValueType = ...,
+    ) -> NDArray[int_]: ...
+    @overload  # +integer, keepdims=True
+    def prod(
+        self: NDArray[integer | bool_],
+        axis: int | tuple[int, ...] | None = None,
+        dtype: None = None,
+        out: None = None,
+        *,
+        keepdims: L[True],
+        initial: _IntLike_co | _NoValueType = ...,
+        where: _ArrayLikeBool_co | _NoValueType = ...,
+    ) -> ndarray[_ShapeT_co, _dtype[int_]]: ...
+    @overload  # object_
+    def prod(
+        self: NDArray[object_],
+        axis: None = None,
+        dtype: None = None,
+        out: None = None,
+        *,
+        keepdims: L[False] | _NoValueType = ...,
+        initial: _NumberLike_co | _NoValueType = ...,
+        where: _ArrayLikeBool_co | _NoValueType = ...,
+    ) -> Any: ...
+    @overload  # dtype: ScalarT
+    def prod[ScalarT: generic](
+        self: NDArray[number | bool_ | object_],
+        axis: None = None,
+        *,
+        dtype: _DTypeLike[ScalarT],
+        out: None = None,
+        keepdims: L[False] | _NoValueType = ...,
+        initial: _NumberLike_co | _NoValueType = ...,
+        where: _ArrayLikeBool_co | _NoValueType = ...,
+    ) -> ScalarT: ...
+    @overload  # dtype: ScalarT (keyword), keepdims=True
+    def prod[ScalarT: generic](
+        self: NDArray[number | bool_ | object_],
+        axis: int | tuple[int, ...] | None = None,
+        *,
+        dtype: _DTypeLike[ScalarT],
+        out: None = None,
+        keepdims: L[True],
+        initial: _NumberLike_co | _NoValueType = ...,
+        where: _ArrayLikeBool_co | _NoValueType = ...,
+    ) -> ndarray[_ShapeT_co, _dtype[ScalarT]]: ...
+    @overload  # dtype: ScalarT (positional), keepdims=True
+    def prod[ScalarT: generic](
+        self: NDArray[number | bool_ | object_],
+        axis: int | tuple[int, ...] | None,
+        dtype: _DTypeLike[ScalarT],
+        out: None = None,
+        *,
+        keepdims: L[True],
+        initial: _NumberLike_co | _NoValueType = ...,
+        where: _ArrayLikeBool_co | _NoValueType = ...,
+    ) -> ndarray[_ShapeT_co, _dtype[ScalarT]]: ...
+    @overload  # axis: <given>, dtype: ScalarT
+    def prod[ScalarT: generic](
+        self: NDArray[number | bool_ | object_],
+        axis: int | tuple[int, ...],
+        dtype: _DTypeLike[ScalarT],
+        out: None = None,
+        *,
+        keepdims: L[False] | _NoValueType = ...,
+        initial: _NumberLike_co | _NoValueType = ...,
+        where: _ArrayLikeBool_co | _NoValueType = ...,
+    ) -> NDArray[ScalarT]: ...
+    @overload  # out: ArrayT (keyword)
+    def prod[ArrayT: ndarray](
+        self: NDArray[number | bool_ | object_],
+        axis: int | tuple[int, ...] | None = None,
+        dtype: DTypeLike | None = None,
+        *,
+        out: ArrayT,
+        keepdims: py_bool | _NoValueType = ...,
+        initial: _NumberLike_co | _NoValueType = ...,
+        where: _ArrayLikeBool_co | _NoValueType = ...,
+    ) -> ArrayT: ...
+    @overload  # out: ArrayT (positional)
+    def prod[ArrayT: ndarray](
+        self: NDArray[number | bool_ | object_],
+        axis: int | tuple[int, ...] | None,
+        dtype: DTypeLike | None,
+        out: ArrayT,
+        *,
+        keepdims: py_bool | _NoValueType = ...,
+        initial: _NumberLike_co | _NoValueType = ...,
+        where: _ArrayLikeBool_co | _NoValueType = ...,
+    ) -> ArrayT: ...
+    @overload  # fallback
+    def prod(
+        self: NDArray[number | bool_ | object_],
+        axis: None = None,
+        dtype: DTypeLike | None = None,
+        out: None = None,
+        *,
+        keepdims: L[False] | _NoValueType = ...,
+        initial: _NumberLike_co | _NoValueType = ...,
+        where: _ArrayLikeBool_co | _NoValueType = ...,
+    ) -> Any: ...
+    @overload  # fallback, axis: <given>
+    def prod(
+        self: NDArray[number | bool_ | object_],
+        axis: int | tuple[int, ...],
+        dtype: DTypeLike | None = None,
+        out: None = None,
+        *,
+        keepdims: L[False] | _NoValueType = ...,
+        initial: _NumberLike_co | _NoValueType = ...,
+        where: _ArrayLikeBool_co | _NoValueType = ...,
+    ) -> ndarray: ...
+    @overload  # fallback, keepdims=True
+    def prod(  # pyright: ignore[reportIncompatibleMethodOverride]
+        self: NDArray[number | bool_ | object_],
+        axis: int | tuple[int, ...] | None = None,
+        dtype: DTypeLike | None = None,
+        out: None = None,
+        *,
+        keepdims: L[True],
+        initial: _NumberLike_co | _NoValueType = ...,
+        where: _ArrayLikeBool_co | _NoValueType = ...,
+    ) -> ndarray[_ShapeT_co]: ...
+
+    # keep in sync with `prod` above (but also accept `timedelta64`)
+    @override  # type: ignore[override]
+    @overload  # ~inexact | timedelta64
+    def sum[ScalarT: inexact | timedelta64](
+        self: NDArray[ScalarT],
+        axis: None = None,
+        dtype: None = None,
+        out: None = None,
+        *,
+        keepdims: L[False] | _NoValueType = ...,
+        initial: _NumberLike_co | _NoValueType = ...,
+        where: _ArrayLikeBool_co | _NoValueType = ...,
+    ) -> ScalarT: ...
+    @overload  # ~inexact | timedelta64, axis: <given>
+    def sum[ScalarT: inexact | timedelta64 | object_](
+        self: NDArray[ScalarT],
+        axis: int | tuple[int, ...],
+        dtype: None = None,
+        out: None = None,
+        *,
+        keepdims: L[False] | _NoValueType = ...,
+        initial: _NumberLike_co | _NoValueType = ...,
+        where: _ArrayLikeBool_co | _NoValueType = ...,
+    ) -> NDArray[ScalarT]: ...
+    @overload  # ~inexact | timedelta64 | object_, keepdims=True
+    def sum[ArrayT: NDArray[inexact | timedelta64 | object_]](
+        self: ArrayT,
+        axis: int | tuple[int, ...] | None = None,
+        dtype: None = None,
+        out: None = None,
+        *,
+        keepdims: L[True],
+        initial: _NumberLike_co | _NoValueType = ...,
+        where: _ArrayLikeBool_co | _NoValueType = ...,
+    ) -> ArrayT: ...
+    @overload  # +integer
+    def sum(
+        self: NDArray[integer | bool_],
+        axis: None = None,
+        dtype: None = None,
+        out: None = None,
+        *,
+        keepdims: L[False] | _NoValueType = ...,
+        initial: _IntLike_co | _NoValueType = ...,
+        where: _ArrayLikeBool_co | _NoValueType = ...,
+    ) -> int_: ...
+    @overload  # +integer, axis: <given>
+    def sum(
+        self: NDArray[integer | bool_],
+        axis: int | tuple[int, ...],
+        dtype: None = None,
+        out: None = None,
+        *,
+        keepdims: L[False] | _NoValueType = ...,
+        initial: _IntLike_co | _NoValueType = ...,
+        where: _ArrayLikeBool_co | _NoValueType = ...,
+    ) -> NDArray[int_]: ...
+    @overload  # +integer, keepdims=True
+    def sum(
+        self: NDArray[integer | bool_],
+        axis: int | tuple[int, ...] | None = None,
+        dtype: None = None,
+        out: None = None,
+        *,
+        keepdims: L[True],
+        initial: _IntLike_co | _NoValueType = ...,
+        where: _ArrayLikeBool_co | _NoValueType = ...,
+    ) -> ndarray[_ShapeT_co, _dtype[int_]]: ...
+    @overload  # object_
+    def sum(
+        self: NDArray[object_],
+        axis: None = None,
+        dtype: None = None,
+        out: None = None,
+        *,
+        keepdims: L[False] | _NoValueType = ...,
+        initial: _NumberLike_co | _NoValueType = ...,
+        where: _ArrayLikeBool_co | _NoValueType = ...,
+    ) -> Any: ...
+    @overload  # dtype: ScalarT
+    def sum[ScalarT: generic](
+        self: NDArray[number | bool_ | timedelta64 | object_],
+        axis: None = None,
+        *,
+        dtype: _DTypeLike[ScalarT],
+        out: None = None,
+        keepdims: L[False] | _NoValueType = ...,
+        initial: _NumberLike_co | _NoValueType = ...,
+        where: _ArrayLikeBool_co | _NoValueType = ...,
+    ) -> ScalarT: ...
+    @overload  # dtype: ScalarT (keyword), keepdims=True
+    def sum[ScalarT: generic](
+        self: NDArray[number | bool_ | timedelta64 | object_],
+        axis: int | tuple[int, ...] | None = None,
+        *,
+        dtype: _DTypeLike[ScalarT],
+        out: None = None,
+        keepdims: L[True],
+        initial: _NumberLike_co | _NoValueType = ...,
+        where: _ArrayLikeBool_co | _NoValueType = ...,
+    ) -> ndarray[_ShapeT_co, _dtype[ScalarT]]: ...
+    @overload  # dtype: ScalarT (positional), keepdims=True
+    def sum[ScalarT: generic](
+        self: NDArray[number | bool_ | timedelta64 | object_],
+        axis: int | tuple[int, ...] | None,
+        dtype: _DTypeLike[ScalarT],
+        out: None = None,
+        *,
+        keepdims: L[True],
+        initial: _NumberLike_co | _NoValueType = ...,
+        where: _ArrayLikeBool_co | _NoValueType = ...,
+    ) -> ndarray[_ShapeT_co, _dtype[ScalarT]]: ...
+    @overload  # axis: <given>, dtype: ScalarT
+    def sum[ScalarT: generic](
+        self: NDArray[number | bool_ | timedelta64 | object_],
+        axis: int | tuple[int, ...],
+        dtype: _DTypeLike[ScalarT],
+        out: None = None,
+        *,
+        keepdims: L[False] | _NoValueType = ...,
+        initial: _NumberLike_co | _NoValueType = ...,
+        where: _ArrayLikeBool_co | _NoValueType = ...,
+    ) -> NDArray[ScalarT]: ...
+    @overload  # out: ArrayT (keyword)
+    def sum[ArrayT: ndarray](
+        self: NDArray[number | bool_ | timedelta64 | object_],
+        axis: int | tuple[int, ...] | None = None,
+        dtype: DTypeLike | None = None,
+        *,
+        out: ArrayT,
+        keepdims: py_bool | _NoValueType = ...,
+        initial: _NumberLike_co | _NoValueType = ...,
+        where: _ArrayLikeBool_co | _NoValueType = ...,
+    ) -> ArrayT: ...
+    @overload  # out: ArrayT (positional)
+    def sum[ArrayT: ndarray](
+        self: NDArray[number | bool_ | timedelta64 | object_],
+        axis: int | tuple[int, ...] | None,
+        dtype: DTypeLike | None,
+        out: ArrayT,
+        *,
+        keepdims: py_bool | _NoValueType = ...,
+        initial: _NumberLike_co | _NoValueType = ...,
+        where: _ArrayLikeBool_co | _NoValueType = ...,
+    ) -> ArrayT: ...
+    @overload  # fallback
+    def sum(
+        self: NDArray[number | bool_ | timedelta64 | object_],
+        axis: None = None,
+        dtype: DTypeLike | None = None,
+        out: None = None,
+        *,
+        keepdims: L[False] | _NoValueType = ...,
+        initial: _NumberLike_co | _NoValueType = ...,
+        where: _ArrayLikeBool_co | _NoValueType = ...,
+    ) -> Any: ...
+    @overload  # fallback, axis: <given>
+    def sum(
+        self: NDArray[number | bool_ | timedelta64 | object_],
+        axis: int | tuple[int, ...],
+        dtype: DTypeLike | None = None,
+        out: None = None,
+        *,
+        keepdims: L[False] | _NoValueType = ...,
+        initial: _NumberLike_co | _NoValueType = ...,
+        where: _ArrayLikeBool_co | _NoValueType = ...,
+    ) -> ndarray: ...
+    @overload  # fallback, keepdims=True
+    def sum(  # pyright: ignore[reportIncompatibleMethodOverride]
+        self: NDArray[number | bool_ | timedelta64 | object_],
+        axis: int | tuple[int, ...] | None = None,
+        dtype: DTypeLike | None = None,
+        out: None = None,
+        *,
+        keepdims: L[True],
+        initial: _NumberLike_co | _NoValueType = ...,
+        where: _ArrayLikeBool_co | _NoValueType = ...,
+    ) -> ndarray[_ShapeT_co]: ...
+
+    # keep in sync with `MaskedArray.cumprod`
+    @override  # type: ignore[override]
+    @overload  # inexact | object_
+    def cumprod[DTypeT: _dtype[inexact | object_]](
+        self: ndarray[Any, DTypeT],
+        axis: None = None,
+        dtype: None = None,
+        out: None = None,
+    ) -> ndarray[_1D, DTypeT]: ...
+    @overload  # +integer
+    def cumprod(
+        self: NDArray[integer | bool_],
+        axis: None = None,
+        dtype: None = None,
+        out: None = None,
+    ) -> ndarray[_1D, _dtype[int_]]: ...
+    @overload  # dtype: <known>  (keyword)
+    def cumprod[ScalarT: generic](
+        self: NDArray[number | bool_ | object_],
+        axis: None = None,
+        *,
+        dtype: _DTypeLike[ScalarT],
+        out: None = None,
+    ) -> ndarray[_1D, _dtype[ScalarT]]: ...
+    @overload  # dtype: <unknown>  (keyword)
+    def cumprod(
+        self: NDArray[number | bool_ | object_],
+        axis: None = None,
+        *,
+        dtype: DTypeLike,
+        out: None = None,
+    ) -> ndarray[_1D]: ...
+    @overload  # dtype: <known>  (positional)
+    def cumprod[ScalarT: generic](
+        self: NDArray[number | bool_ | object_],
+        axis: None,
+        dtype: _DTypeLike[ScalarT],
+        out: None = None,
+    ) -> ndarray[_1D, _dtype[ScalarT]]: ...
+    @overload  # dtype: <unknown>  (positional)
+    def cumprod(
+        self: NDArray[number | bool_ | object_],
+        axis: None,
+        dtype: DTypeLike,
+        out: None = None,
+    ) -> ndarray[_1D]: ...
+    @overload  # inexact | object_, axis: <given>
+    def cumprod[ArrayT: NDArray[inexact | object_]](
+        self: ArrayT,
+        axis: SupportsIndex,
+        dtype: None = None,
+        out: None = None,
+    ) -> ArrayT: ...
+    @overload  # +integer, axis: <given>
+    def cumprod[ShapeT: _Shape](
+        self: ndarray[ShapeT, _dtype[integer | bool_]],
+        axis: SupportsIndex,
+        dtype: None = None,
+        out: None = None,
+    ) -> ndarray[ShapeT, _dtype[int_]]: ...
+    @overload  # axis: <given>, dtype: <known>
+    def cumprod[ShapeT: _Shape, ScalarT: generic](
+        self: ndarray[ShapeT, _dtype[number | bool_ | object_]],
+        axis: SupportsIndex,
+        dtype: _DTypeLike[ScalarT],
+        out: None = None,
+    ) -> ndarray[ShapeT, _dtype[ScalarT]]: ...
+    @overload  # axis: <given>, dtype: <unknown>
+    def cumprod[ShapeT: _Shape](
+        self: ndarray[ShapeT, _dtype[number | bool_ | object_]],
+        axis: SupportsIndex,
+        dtype: DTypeLike,
+        out: None = None,
+    ) -> ndarray[ShapeT]: ...
+    @overload  # out: ndarray
+    def cumprod[ArrayT: ndarray](
+        self: NDArray[number | bool_ | object_],
+        axis: SupportsIndex | None,
+        dtype: DTypeLike | None,
+        out: ArrayT,
+    ) -> ArrayT: ...
+    @overload
+    def cumprod[ArrayT: ndarray](  # pyright: ignore[reportIncompatibleMethodOverride]
+        self: NDArray[number | bool_ | object_],
+        axis: SupportsIndex | None = None,
+        dtype: DTypeLike | None = None,
+        *,
+        out: ArrayT,
+    ) -> ArrayT: ...
+
+    # keep in sync with `MaskedArray.cumsum`
+    @override  # type: ignore[override]
+    @overload  # inexact | timedelta64 | object_
+    def cumsum[DTypeT: _dtype[inexact | timedelta64 | object_]](
+        self: ndarray[Any, DTypeT],
+        axis: None = None,
+        dtype: None = None,
+        out: None = None,
+    ) -> ndarray[_1D, DTypeT]: ...
+    @overload  # +integer
+    def cumsum(
+        self: NDArray[integer | bool_],
+        axis: None = None,
+        dtype: None = None,
+        out: None = None,
+    ) -> ndarray[_1D, _dtype[int_]]: ...
+    @overload  # dtype: <known>  (keyword)
+    def cumsum[ScalarT: generic](
+        self: NDArray[number | bool_ | timedelta64 | object_],
+        axis: None = None,
+        *,
+        dtype: _DTypeLike[ScalarT],
+        out: None = None,
+    ) -> ndarray[_1D, _dtype[ScalarT]]: ...
+    @overload  # dtype: <unknown>  (keyword)
+    def cumsum(
+        self: NDArray[number | bool_ | timedelta64 | object_],
+        axis: None = None,
+        *,
+        dtype: DTypeLike,
+        out: None = None,
+    ) -> ndarray[_1D]: ...
+    @overload  # dtype: <known>  (positional)
+    def cumsum[ScalarT: generic](
+        self: NDArray[number | bool_ | timedelta64 | object_],
+        axis: None,
+        dtype: _DTypeLike[ScalarT],
+        out: None = None,
+    ) -> ndarray[_1D, _dtype[ScalarT]]: ...
+    @overload  # dtype: <unknown>  (positional)
+    def cumsum(
+        self: NDArray[number | bool_ | timedelta64 | object_],
+        axis: None,
+        dtype: DTypeLike,
+        out: None = None,
+    ) -> ndarray[_1D]: ...
+    @overload  # inexact | timedelta64 | object_, axis: <given>
+    def cumsum[ArrayT: NDArray[inexact | timedelta64 | object_]](
+        self: ArrayT,
+        axis: SupportsIndex,
+        dtype: None = None,
+        out: None = None,
+    ) -> ArrayT: ...
+    @overload  # +integer, axis: <given>
+    def cumsum[ShapeT: _Shape](
+        self: ndarray[ShapeT, _dtype[integer | bool_]],
+        axis: SupportsIndex,
+        dtype: None = None,
+        out: None = None,
+    ) -> ndarray[ShapeT, _dtype[int_]]: ...
+    @overload  # axis: <given>, dtype: <known>
+    def cumsum[ShapeT: _Shape, ScalarT: generic](
+        self: ndarray[ShapeT, _dtype[number | bool_ | timedelta64 | object_]],
+        axis: SupportsIndex,
+        dtype: _DTypeLike[ScalarT],
+        out: None = None,
+    ) -> ndarray[ShapeT, _dtype[ScalarT]]: ...
+    @overload  # axis: <given>, dtype: <unknown>
+    def cumsum[ShapeT: _Shape](
+        self: ndarray[ShapeT, _dtype[number | bool_ | timedelta64 | object_]],
+        axis: SupportsIndex,
+        dtype: DTypeLike,
+        out: None = None,
+    ) -> ndarray[ShapeT]: ...
+    @overload  # out: ndarray
+    def cumsum[ArrayT: ndarray](
+        self: NDArray[number | bool_ | timedelta64 | object_],
+        axis: SupportsIndex | None,
+        dtype: DTypeLike | None,
+        out: ArrayT,
+    ) -> ArrayT: ...
+    @overload
+    def cumsum[ArrayT: ndarray](  # pyright: ignore[reportIncompatibleMethodOverride]
+        self: NDArray[number | bool_ | timedelta64 | object_],
+        axis: SupportsIndex | None = None,
+        dtype: DTypeLike | None = None,
+        *,
+        out: ArrayT,
+    ) -> ArrayT: ...
+
+    #
+    @override  # type: ignore[override]
+    @overload  # +integer | ~object_
+    def mean(
+        self: NDArray[integer | bool_ | object_],
+        axis: None = None,
+        dtype: None = None,
+        out: None = None,
+        *,
+        keepdims: L[False] | _NoValueType = ...,
+        where: _ArrayLikeBool_co | _NoValueType = ...,
+    ) -> float64: ...
+    @overload  # +integer, axis: <given>
+    def mean(
+        self: NDArray[integer | bool_],
+        axis: int | tuple[int, ...],
+        dtype: None = None,
+        out: None = None,
+        *,
+        keepdims: L[False] | _NoValueType = ...,
+        where: _ArrayLikeBool_co | _NoValueType = ...,
+    ) -> NDArray[float64]: ...
+    @overload  # +integer, keepdims=True
+    def mean(
+        self: NDArray[integer | bool_],
+        axis: int | tuple[int, ...] | None = None,
+        dtype: None = None,
+        out: None = None,
+        *,
+        keepdims: L[True],
+        where: _ArrayLikeBool_co | _NoValueType = ...,
+    ) -> ndarray[_ShapeT_co, _dtype[float64]]: ...
+    @overload  # ~inexact | timedelta64
+    def mean[ScalarT: inexact | timedelta64](
+        self: NDArray[ScalarT],
+        axis: None = None,
+        dtype: None = None,
+        out: None = None,
+        *,
+        keepdims: L[False] | _NoValueType = ...,
+        where: _ArrayLikeBool_co | _NoValueType = ...,
+    ) -> ScalarT: ...
+    @overload  # ~inexact | timedelta64, axis: <given>
+    def mean[ScalarT: inexact | timedelta64 | object_](
+        self: NDArray[ScalarT],
+        axis: int | tuple[int, ...],
+        dtype: None = None,
+        out: None = None,
+        *,
+        keepdims: L[False] | _NoValueType = ...,
+        where: _ArrayLikeBool_co | _NoValueType = ...,
+    ) -> NDArray[ScalarT]: ...
+    @overload  # ~inexact | timedelta64 | object_, keepdims=True
+    def mean[ArrayT: NDArray[inexact | timedelta64 | object_]](
+        self: ArrayT,
+        axis: int | tuple[int, ...] | None = None,
+        dtype: None = None,
+        out: None = None,
+        *,
+        keepdims: L[True],
+        where: _ArrayLikeBool_co | _NoValueType = ...,
+    ) -> ArrayT: ...
+    @overload  # dtype: ScalarT
+    def mean[ScalarT: generic](
+        self: NDArray[number | bool_ | timedelta64 | object_],
+        axis: None = None,
+        *,
+        dtype: _DTypeLike[ScalarT],
+        out: None = None,
+        keepdims: L[False] | _NoValueType = ...,
+        where: _ArrayLikeBool_co | _NoValueType = ...,
+    ) -> ScalarT: ...
+    @overload  # dtype: ScalarT (keyword), keepdims=True
+    def mean[ScalarT: generic](
+        self: NDArray[number | bool_ | timedelta64 | object_],
+        axis: int | tuple[int, ...] | None = None,
+        *,
+        dtype: _DTypeLike[ScalarT],
+        out: None = None,
+        keepdims: L[True],
+        where: _ArrayLikeBool_co | _NoValueType = ...,
+    ) -> ndarray[_ShapeT_co, _dtype[ScalarT]]: ...
+    @overload  # dtype: ScalarT (positional), keepdims=True
+    def mean[ScalarT: generic](
+        self: NDArray[number | bool_ | timedelta64 | object_],
+        axis: int | tuple[int, ...] | None,
+        dtype: _DTypeLike[ScalarT],
+        out: None = None,
+        *,
+        keepdims: L[True],
+        where: _ArrayLikeBool_co | _NoValueType = ...,
+    ) -> ndarray[_ShapeT_co, _dtype[ScalarT]]: ...
+    @overload  # axis: <given>, dtype: ScalarT
+    def mean[ScalarT: generic](
+        self: NDArray[number | bool_ | timedelta64 | object_],
+        axis: int | tuple[int, ...],
+        dtype: _DTypeLike[ScalarT],
+        out: None = None,
+        *,
+        keepdims: L[False] | _NoValueType = ...,
+        where: _ArrayLikeBool_co | _NoValueType = ...,
+    ) -> NDArray[ScalarT]: ...
+    @overload  # out: ArrayT
+    def mean[ArrayT: ndarray](
+        self: NDArray[number | bool_ | timedelta64 | object_],
+        axis: int | tuple[int, ...] | None = None,
+        dtype: DTypeLike | None = None,
+        *,
+        out: ArrayT,
+        keepdims: py_bool | _NoValueType = ...,
+        where: _ArrayLikeBool_co | _NoValueType = ...,
+    ) -> ArrayT: ...
+    @overload  # fallback
+    def mean(
+        self: NDArray[number | bool_ | timedelta64 | object_],
+        axis: None = None,
+        dtype: DTypeLike | None = None,
+        out: None = None,
+        *,
+        keepdims: L[False] | _NoValueType = ...,
+        where: _ArrayLikeBool_co | _NoValueType = ...,
+    ) -> Any: ...
+    @overload  # fallback, axis: <given>
+    def mean(
+        self: NDArray[number | bool_ | timedelta64 | object_],
+        axis: int | tuple[int, ...],
+        dtype: DTypeLike | None = None,
+        out: None = None,
+        *,
+        keepdims: L[False] | _NoValueType = ...,
+        where: _ArrayLikeBool_co | _NoValueType = ...,
+    ) -> ndarray: ...
+    @overload  # fallback, keepdims=True
+    def mean(  # pyright: ignore[reportIncompatibleMethodOverride]
+        self: NDArray[number | bool_ | timedelta64 | object_],
+        axis: int | tuple[int, ...] | None = None,
+        dtype: DTypeLike | None = None,
+        out: None = None,
+        *,
+        keepdims: L[True],
+        where: _ArrayLikeBool_co | _NoValueType = ...,
+    ) -> ndarray[_ShapeT_co]: ...
+
+    # keep in sync with `ndarray.mean` above
+    @override  # type: ignore[override]
+    @overload  # ~complex128 | +integer | ~object_
+    def std(
+        self: NDArray[complex128 | integer | bool_ | object_],
+        axis: None = None,
+        dtype: None = None,
+        out: None = None,
+        ddof: float = 0,
+        *,
+        keepdims: L[False] | _NoValueType = ...,
+        where: _ArrayLikeBool_co | _NoValueType = ...,
+        mean: _ArrayLikeNumber_co | _NoValueType = ...,
+        correction: float | _NoValueType = ...,
+    ) -> float64: ...
+    @overload  # ~complex128 | +integer, axis: <given>
+    def std(
+        self: NDArray[complex128 | integer | bool_],
+        axis: int | tuple[int, ...],
+        dtype: None = None,
+        out: None = None,
+        ddof: float = 0,
+        *,
+        keepdims: L[False] | _NoValueType = ...,
+        where: _ArrayLikeBool_co | _NoValueType = ...,
+        mean: _ArrayLikeNumber_co | _NoValueType = ...,
+        correction: float | _NoValueType = ...,
+    ) -> NDArray[float64]: ...
+    @overload  # ~complex128 | +integer, keepdims=True
+    def std(
+        self: NDArray[complex128 | integer | bool_],
+        axis: int | tuple[int, ...] | None = None,
+        dtype: None = None,
+        out: None = None,
+        ddof: float = 0,
+        *,
+        keepdims: L[True],
+        where: _ArrayLikeBool_co | _NoValueType = ...,
+        mean: _ArrayLikeNumber_co | _NoValueType = ...,
+        correction: float | _NoValueType = ...,
+    ) -> ndarray[_ShapeT_co, _dtype[float64]]: ...
+    @overload  # ~floating | timedelta64
+    def std[ScalarT: floating | timedelta64](
+        self: NDArray[ScalarT],
+        axis: None = None,
+        dtype: None = None,
+        out: None = None,
+        ddof: float = 0,
+        *,
+        keepdims: L[False] | _NoValueType = ...,
+        where: _ArrayLikeBool_co | _NoValueType = ...,
+        mean: _ArrayLikeNumber_co | _NoValueType = ...,
+        correction: float | _NoValueType = ...,
+    ) -> ScalarT: ...
+    @overload  # ~floating | timedelta64, axis: <given>
+    def std[ScalarT: floating | timedelta64 | object_](
+        self: NDArray[ScalarT],
+        axis: int | tuple[int, ...],
+        dtype: None = None,
+        out: None = None,
+        ddof: float = 0,
+        *,
+        keepdims: L[False] | _NoValueType = ...,
+        where: _ArrayLikeBool_co | _NoValueType = ...,
+        mean: _ArrayLikeNumber_co | _NoValueType = ...,
+        correction: float | _NoValueType = ...,
+    ) -> NDArray[ScalarT]: ...
+    @overload  # ~floating | timedelta64 | object_, keepdims=True
+    def std[ArrayT: NDArray[floating | timedelta64 | object_]](
+        self: ArrayT,
+        axis: int | tuple[int, ...] | None = None,
+        dtype: None = None,
+        out: None = None,
+        ddof: float = 0,
+        *,
+        keepdims: L[True],
+        where: _ArrayLikeBool_co | _NoValueType = ...,
+        mean: _ArrayLikeNumber_co | _NoValueType = ...,
+        correction: float | _NoValueType = ...,
+    ) -> ArrayT: ...
+    @overload  # dtype: ScalarT
+    def std[ScalarT: generic](
+        self: NDArray[number | bool_ | timedelta64 | object_],
+        axis: None = None,
+        *,
+        dtype: _DTypeLike[ScalarT],
+        out: None = None,
+        ddof: float = 0,
+        keepdims: L[False] | _NoValueType = ...,
+        where: _ArrayLikeBool_co | _NoValueType = ...,
+        mean: _ArrayLikeNumber_co | _NoValueType = ...,
+        correction: float | _NoValueType = ...,
+    ) -> ScalarT: ...
+    @overload  # dtype: ScalarT (keyword), keepdims=True
+    def std[ScalarT: generic](
+        self: NDArray[number | bool_ | timedelta64 | object_],
+        axis: int | tuple[int, ...] | None = None,
+        *,
+        dtype: _DTypeLike[ScalarT],
+        out: None = None,
+        ddof: float = 0,
+        keepdims: L[True],
+        where: _ArrayLikeBool_co | _NoValueType = ...,
+        mean: _ArrayLikeNumber_co | _NoValueType = ...,
+        correction: float | _NoValueType = ...,
+    ) -> ndarray[_ShapeT_co, _dtype[ScalarT]]: ...
+    @overload  # dtype: ScalarT (positional), keepdims=True
+    def std[ScalarT: generic](
+        self: NDArray[number | bool_ | timedelta64 | object_],
+        axis: int | tuple[int, ...] | None,
+        dtype: _DTypeLike[ScalarT],
+        out: None = None,
+        ddof: float = 0,
+        *,
+        keepdims: L[True],
+        where: _ArrayLikeBool_co | _NoValueType = ...,
+        mean: _ArrayLikeNumber_co | _NoValueType = ...,
+        correction: float | _NoValueType = ...,
+    ) -> ndarray[_ShapeT_co, _dtype[ScalarT]]: ...
+    @overload  # axis: <given>, dtype: ScalarT
+    def std[ScalarT: generic](
+        self: NDArray[number | bool_ | timedelta64 | object_],
+        axis: int | tuple[int, ...],
+        dtype: _DTypeLike[ScalarT],
+        out: None = None,
+        ddof: float = 0,
+        *,
+        keepdims: L[False] | _NoValueType = ...,
+        where: _ArrayLikeBool_co | _NoValueType = ...,
+        mean: _ArrayLikeNumber_co | _NoValueType = ...,
+        correction: float | _NoValueType = ...,
+    ) -> NDArray[ScalarT]: ...
+    @overload  # out: ArrayT
+    def std[ArrayT: ndarray](
+        self: NDArray[number | bool_ | timedelta64 | object_],
+        axis: int | tuple[int, ...] | None = None,
+        dtype: DTypeLike | None = None,
+        *,
+        out: ArrayT,
+        ddof: float = 0,
+        keepdims: py_bool | _NoValueType = ...,
+        where: _ArrayLikeBool_co | _NoValueType = ...,
+        mean: _ArrayLikeNumber_co | _NoValueType = ...,
+        correction: float | _NoValueType = ...,
+    ) -> ArrayT: ...
+    @overload  # fallback
+    def std(
+        self: NDArray[number | bool_ | timedelta64 | object_],
+        axis: None = None,
+        dtype: DTypeLike | None = None,
+        out: None = None,
+        ddof: float = 0,
+        *,
+        keepdims: L[False] | _NoValueType = ...,
+        where: _ArrayLikeBool_co | _NoValueType = ...,
+        mean: _ArrayLikeNumber_co | _NoValueType = ...,
+        correction: float | _NoValueType = ...,
+    ) -> Any: ...
+    @overload  # fallback, axis: <given>
+    def std(
+        self: NDArray[number | bool_ | timedelta64 | object_],
+        axis: int | tuple[int, ...],
+        dtype: DTypeLike | None = None,
+        out: None = None,
+        ddof: float = 0,
+        *,
+        keepdims: L[False] | _NoValueType = ...,
+        where: _ArrayLikeBool_co | _NoValueType = ...,
+        mean: _ArrayLikeNumber_co | _NoValueType = ...,
+        correction: float | _NoValueType = ...,
+    ) -> ndarray: ...
+    @overload  # fallback, keepdims=True
+    def std(  # pyright: ignore[reportIncompatibleMethodOverride]
+        self: NDArray[number | bool_ | timedelta64 | object_],
+        axis: int | tuple[int, ...] | None = None,
+        dtype: DTypeLike | None = None,
+        out: None = None,
+        ddof: float = 0,
+        *,
+        keepdims: L[True],
+        where: _ArrayLikeBool_co | _NoValueType = ...,
+        mean: _ArrayLikeNumber_co | _NoValueType = ...,
+        correction: float | _NoValueType = ...,
+    ) -> ndarray[_ShapeT_co]: ...
+
+    # keep in sync with `ndarray.std` above
+    @override  # type: ignore[override]
+    @overload  # ~complex128 | +integer | ~object_
+    def var(
+        self: NDArray[complex128 | integer | bool_ | object_],
+        axis: None = None,
+        dtype: None = None,
+        out: None = None,
+        ddof: float = 0,
+        *,
+        keepdims: L[False] | _NoValueType = ...,
+        where: _ArrayLikeBool_co | _NoValueType = ...,
+        mean: _ArrayLikeNumber_co | _NoValueType = ...,
+        correction: float | _NoValueType = ...,
+    ) -> float64: ...
+    @overload  # ~complex128 | +integer, axis: <given>
+    def var(
+        self: NDArray[complex128 | integer | bool_],
+        axis: int | tuple[int, ...],
+        dtype: None = None,
+        out: None = None,
+        ddof: float = 0,
+        *,
+        keepdims: L[False] | _NoValueType = ...,
+        where: _ArrayLikeBool_co | _NoValueType = ...,
+        mean: _ArrayLikeNumber_co | _NoValueType = ...,
+        correction: float | _NoValueType = ...,
+    ) -> NDArray[float64]: ...
+    @overload  # ~complex128 | +integer, keepdims=True
+    def var(
+        self: NDArray[complex128 | integer | bool_],
+        axis: int | tuple[int, ...] | None = None,
+        dtype: None = None,
+        out: None = None,
+        ddof: float = 0,
+        *,
+        keepdims: L[True],
+        where: _ArrayLikeBool_co | _NoValueType = ...,
+        mean: _ArrayLikeNumber_co | _NoValueType = ...,
+        correction: float | _NoValueType = ...,
+    ) -> ndarray[_ShapeT_co, _dtype[float64]]: ...
+    @overload  # ~floating | timedelta64
+    def var[ScalarT: floating | timedelta64](
+        self: NDArray[ScalarT],
+        axis: None = None,
+        dtype: None = None,
+        out: None = None,
+        ddof: float = 0,
+        *,
+        keepdims: L[False] | _NoValueType = ...,
+        where: _ArrayLikeBool_co | _NoValueType = ...,
+        mean: _ArrayLikeNumber_co | _NoValueType = ...,
+        correction: float | _NoValueType = ...,
+    ) -> ScalarT: ...
+    @overload  # ~floating | timedelta64, axis: <given>
+    def var[ScalarT: floating | timedelta64 | object_](
+        self: NDArray[ScalarT],
+        axis: int | tuple[int, ...],
+        dtype: None = None,
+        out: None = None,
+        ddof: float = 0,
+        *,
+        keepdims: L[False] | _NoValueType = ...,
+        where: _ArrayLikeBool_co | _NoValueType = ...,
+        mean: _ArrayLikeNumber_co | _NoValueType = ...,
+        correction: float | _NoValueType = ...,
+    ) -> NDArray[ScalarT]: ...
+    @overload  # ~floating | timedelta64 | object_, keepdims=True
+    def var[ArrayT: NDArray[floating | timedelta64 | object_]](
+        self: ArrayT,
+        axis: int | tuple[int, ...] | None = None,
+        dtype: None = None,
+        out: None = None,
+        ddof: float = 0,
+        *,
+        keepdims: L[True],
+        where: _ArrayLikeBool_co | _NoValueType = ...,
+        mean: _ArrayLikeNumber_co | _NoValueType = ...,
+        correction: float | _NoValueType = ...,
+    ) -> ArrayT: ...
+    @overload  # dtype: ScalarT
+    def var[ScalarT: generic](
+        self: NDArray[number | bool_ | timedelta64 | object_],
+        axis: None = None,
+        *,
+        dtype: _DTypeLike[ScalarT],
+        out: None = None,
+        ddof: float = 0,
+        keepdims: L[False] | _NoValueType = ...,
+        where: _ArrayLikeBool_co | _NoValueType = ...,
+        mean: _ArrayLikeNumber_co | _NoValueType = ...,
+        correction: float | _NoValueType = ...,
+    ) -> ScalarT: ...
+    @overload  # dtype: ScalarT (keyword), keepdims=True
+    def var[ScalarT: generic](
+        self: NDArray[number | bool_ | timedelta64 | object_],
+        axis: int | tuple[int, ...] | None = None,
+        *,
+        dtype: _DTypeLike[ScalarT],
+        out: None = None,
+        ddof: float = 0,
+        keepdims: L[True],
+        where: _ArrayLikeBool_co | _NoValueType = ...,
+        mean: _ArrayLikeNumber_co | _NoValueType = ...,
+        correction: float | _NoValueType = ...,
+    ) -> ndarray[_ShapeT_co, _dtype[ScalarT]]: ...
+    @overload  # dtype: ScalarT (positional), keepdims=True
+    def var[ScalarT: generic](
+        self: NDArray[number | bool_ | timedelta64 | object_],
+        axis: int | tuple[int, ...] | None,
+        dtype: _DTypeLike[ScalarT],
+        out: None = None,
+        ddof: float = 0,
+        *,
+        keepdims: L[True],
+        where: _ArrayLikeBool_co | _NoValueType = ...,
+        mean: _ArrayLikeNumber_co | _NoValueType = ...,
+        correction: float | _NoValueType = ...,
+    ) -> ndarray[_ShapeT_co, _dtype[ScalarT]]: ...
+    @overload  # axis: <given>, dtype: ScalarT
+    def var[ScalarT: generic](
+        self: NDArray[number | bool_ | timedelta64 | object_],
+        axis: int | tuple[int, ...],
+        dtype: _DTypeLike[ScalarT],
+        out: None = None,
+        ddof: float = 0,
+        *,
+        keepdims: L[False] | _NoValueType = ...,
+        where: _ArrayLikeBool_co | _NoValueType = ...,
+        mean: _ArrayLikeNumber_co | _NoValueType = ...,
+        correction: float | _NoValueType = ...,
+    ) -> NDArray[ScalarT]: ...
+    @overload  # out: ArrayT
+    def var[ArrayT: ndarray](
+        self: NDArray[number | bool_ | timedelta64 | object_],
+        axis: int | tuple[int, ...] | None = None,
+        dtype: DTypeLike | None = None,
+        *,
+        out: ArrayT,
+        ddof: float = 0,
+        keepdims: py_bool | _NoValueType = ...,
+        where: _ArrayLikeBool_co | _NoValueType = ...,
+        mean: _ArrayLikeNumber_co | _NoValueType = ...,
+        correction: float | _NoValueType = ...,
+    ) -> ArrayT: ...
+    @overload  # fallback
+    def var(
+        self: NDArray[number | bool_ | timedelta64 | object_],
+        axis: None = None,
+        dtype: DTypeLike | None = None,
+        out: None = None,
+        ddof: float = 0,
+        *,
+        keepdims: L[False] | _NoValueType = ...,
+        where: _ArrayLikeBool_co | _NoValueType = ...,
+        mean: _ArrayLikeNumber_co | _NoValueType = ...,
+        correction: float | _NoValueType = ...,
+    ) -> Any: ...
+    @overload  # fallback, axis: <given>
+    def var(
+        self: NDArray[number | bool_ | timedelta64 | object_],
+        axis: int | tuple[int, ...],
+        dtype: DTypeLike | None = None,
+        out: None = None,
+        ddof: float = 0,
+        *,
+        keepdims: L[False] | _NoValueType = ...,
+        where: _ArrayLikeBool_co | _NoValueType = ...,
+        mean: _ArrayLikeNumber_co | _NoValueType = ...,
+        correction: float | _NoValueType = ...,
+    ) -> ndarray: ...
+    @overload  # fallback, keepdims=True
+    def var(  # pyright: ignore[reportIncompatibleMethodOverride]
+        self: NDArray[number | bool_ | timedelta64 | object_],
+        axis: int | tuple[int, ...] | None = None,
+        dtype: DTypeLike | None = None,
+        out: None = None,
+        ddof: float = 0,
+        *,
+        keepdims: L[True],
+        where: _ArrayLikeBool_co | _NoValueType = ...,
+        mean: _ArrayLikeNumber_co | _NoValueType = ...,
+        correction: float | _NoValueType = ...,
+    ) -> ndarray[_ShapeT_co]: ...
+
+    # keep in sync with `ndarray.amin` below
+    @override  # type: ignore[override]
+    @overload  # +number | timedelta64 | datetime64
+    def max[ScalarT: number | bool_ | timedelta64 | datetime64](
+        self: NDArray[ScalarT],
+        axis: None = None,
+        out: None = None,
+        *,
+        keepdims: L[False] | _NoValueType = ...,
+        initial: _NumberLike_co | _NoValueType = ...,
+        where: _ArrayLikeBool_co | _NoValueType = ...,
+    ) -> ScalarT: ...
+    @overload  # +number | timedelta64 | datetime64 | object_, axis: <given>
+    def max[ScalarT: number | bool_ | timedelta64 | datetime64 | object_](
+        self: NDArray[ScalarT],
+        axis: int | tuple[int, ...],
+        out: None = None,
+        *,
+        keepdims: L[False] | _NoValueType = ...,
+        initial: _NumberLike_co | _NoValueType = ...,
+        where: _ArrayLikeBool_co | _NoValueType = ...,
+    ) -> NDArray[ScalarT]: ...
+    @overload  # +number | timedelta64 | datetime64 | object_, keepdims=True
+    def max[ArrayT: NDArray[number | bool_ | timedelta64 | datetime64 | object_]](
+        self: ArrayT,
+        axis: int | tuple[int, ...] | None = None,
+        out: None = None,
+        *,
+        keepdims: L[True],
+        initial: _NumberLike_co | _NoValueType = ...,
+        where: _ArrayLikeBool_co | _NoValueType = ...,
+    ) -> ArrayT: ...
+    @overload  # object_
+    def max(
+        self: NDArray[object_],
+        axis: None = None,
+        out: None = None,
+        *,
+        keepdims: L[False] | _NoValueType = ...,
+        initial: _NumberLike_co | _NoValueType = ...,
+        where: _ArrayLikeBool_co | _NoValueType = ...,
+    ) -> Any: ...
+    @overload  # out: ArrayT
+    def max[ArrayT: ndarray](  # pyright: ignore[reportIncompatibleMethodOverride]
+        self: NDArray[number | bool_ | timedelta64 | datetime64 | object_],
+        axis: int | tuple[int, ...] | None = None,
+        *,
+        out: ArrayT,
+        keepdims: bool | _NoValueType = ...,
+        initial: _NumberLike_co | _NoValueType = ...,
+        where: _ArrayLikeBool_co | _NoValueType = ...,
+    ) -> ArrayT: ...
+
+    # keep in sync with `ndarray.amax` above
+    @override  # type: ignore[override]
+    @overload  # +number | timedelta64 | datetime64
+    def min[ScalarT: number | bool_ | timedelta64 | datetime64](
+        self: NDArray[ScalarT],
+        axis: None = None,
+        out: None = None,
+        *,
+        keepdims: L[False] | _NoValueType = ...,
+        initial: _NumberLike_co | _NoValueType = ...,
+        where: _ArrayLikeBool_co | _NoValueType = ...,
+    ) -> ScalarT: ...
+    @overload  # +number | timedelta64 | datetime64 | object_, axis: <given>
+    def min[ScalarT: number | bool_ | timedelta64 | datetime64 | object_](
+        self: NDArray[ScalarT],
+        axis: int | tuple[int, ...],
+        out: None = None,
+        *,
+        keepdims: L[False] | _NoValueType = ...,
+        initial: _NumberLike_co | _NoValueType = ...,
+        where: _ArrayLikeBool_co | _NoValueType = ...,
+    ) -> NDArray[ScalarT]: ...
+    @overload  # +number | timedelta64 | datetime64 | object_, keepdims=True
+    def min[ArrayT: NDArray[number | bool_ | timedelta64 | datetime64 | object_]](
+        self: ArrayT,
+        axis: int | tuple[int, ...] | None = None,
+        out: None = None,
+        *,
+        keepdims: L[True],
+        initial: _NumberLike_co | _NoValueType = ...,
+        where: _ArrayLikeBool_co | _NoValueType = ...,
+    ) -> ArrayT: ...
+    @overload  # object_
+    def min(
+        self: NDArray[object_],
+        axis: None = None,
+        out: None = None,
+        *,
+        keepdims: L[False] | _NoValueType = ...,
+        initial: _NumberLike_co | _NoValueType = ...,
+        where: _ArrayLikeBool_co | _NoValueType = ...,
+    ) -> Any: ...
+    @overload  # out: ArrayT
+    def min[ArrayT: ndarray](  # pyright: ignore[reportIncompatibleMethodOverride]
+        self: NDArray[number | bool_ | timedelta64 | datetime64 | object_],
+        axis: int | tuple[int, ...] | None = None,
+        *,
+        out: ArrayT,
+        keepdims: bool | _NoValueType = ...,
+        initial: _NumberLike_co | _NoValueType = ...,
+        where: _ArrayLikeBool_co | _NoValueType = ...,
     ) -> ArrayT: ...
 
     #
@@ -2345,8 +3695,9 @@ class ndarray(_ArrayOrScalarCommon, Generic[_ShapeT_co, _DTypeT_co]):
         kth: _ArrayLikeInt,
         /,
         axis: SupportsIndex = -1,
-        kind: _PartitionKind = "introselect",
+        kind: _PartitionKind | None = None,
         order: None = None,
+        descending: py_bool | None = None,
     ) -> None: ...
     @overload
     def partition(
@@ -2354,8 +3705,9 @@ class ndarray(_ArrayOrScalarCommon, Generic[_ShapeT_co, _DTypeT_co]):
         kth: _ArrayLikeInt,
         /,
         axis: SupportsIndex = -1,
-        kind: _PartitionKind = "introselect",
+        kind: _PartitionKind | None = None,
         order: str | Sequence[str] | None = None,
+        descending: py_bool | None = None,
     ) -> None: ...
 
     # keep in sync with `ma.core.MaskedArray.argpartition`
@@ -2366,8 +3718,9 @@ class ndarray(_ArrayOrScalarCommon, Generic[_ShapeT_co, _DTypeT_co]):
         kth: _ArrayLikeInt,
         /,
         axis: None,
-        kind: _PartitionKind = "introselect",
+        kind: _PartitionKind | None = None,
         order: None = None,
+        descending: py_bool | None = None,
     ) -> ndarray[tuple[int], _dtype[intp]]: ...
     @overload  # axis: index (default)
     def argpartition(
@@ -2375,8 +3728,9 @@ class ndarray(_ArrayOrScalarCommon, Generic[_ShapeT_co, _DTypeT_co]):
         kth: _ArrayLikeInt,
         /,
         axis: SupportsIndex = -1,
-        kind: _PartitionKind = "introselect",
+        kind: _PartitionKind | None = None,
         order: None = None,
+        descending: py_bool | None = None,
     ) -> ndarray[_ShapeT_co, _dtype[intp]]: ...
     @overload  # void, axis: None
     def argpartition(
@@ -2384,8 +3738,9 @@ class ndarray(_ArrayOrScalarCommon, Generic[_ShapeT_co, _DTypeT_co]):
         kth: _ArrayLikeInt,
         /,
         axis: None,
-        kind: _PartitionKind = "introselect",
+        kind: _PartitionKind | None = None,
         order: str | Sequence[str] | None = None,
+        descending: py_bool | None = None,
     ) -> ndarray[tuple[int], _dtype[intp]]: ...
     @overload  # void, axis: index (default)
     def argpartition(
@@ -2393,11 +3748,34 @@ class ndarray(_ArrayOrScalarCommon, Generic[_ShapeT_co, _DTypeT_co]):
         kth: _ArrayLikeInt,
         /,
         axis: SupportsIndex = -1,
-        kind: _PartitionKind = "introselect",
+        kind: _PartitionKind | None = None,
         order: str | Sequence[str] | None = None,
+        descending: py_bool | None = None,
     ) -> ndarray[_ShapeT_co, _dtype[intp]]: ...
 
     # keep in sync with `ma.MaskedArray.diagonal`
+    @overload  # ?d  (workaround)
+    def diagonal[DTypeT: _dtype](
+        self: ndarray[tuple[Never, Never, Never, Never], DTypeT],
+        offset: SupportsIndex = 0,
+        axis1: SupportsIndex = 0,
+        axis2: SupportsIndex = 1,
+    ) -> ndarray[_AnyShape, DTypeT]: ...
+    @overload  # 2d
+    def diagonal[DTypeT: _dtype](
+        self: ndarray[tuple[int, int], DTypeT],
+        offset: SupportsIndex = 0,
+        axis1: SupportsIndex = 0,
+        axis2: SupportsIndex = 1,
+    ) -> ndarray[tuple[int], DTypeT]: ...
+    @overload  # 3d
+    def diagonal[DTypeT: _dtype](
+        self: ndarray[tuple[int, int, int], DTypeT],
+        offset: SupportsIndex = 0,
+        axis1: SupportsIndex = 0,
+        axis2: SupportsIndex = 1,
+    ) -> ndarray[tuple[int, int], DTypeT]: ...
+    @overload  # Nd  (fallback)
     def diagonal(
         self,
         offset: SupportsIndex = 0,
@@ -2414,8 +3792,17 @@ class ndarray(_ArrayOrScalarCommon, Generic[_ShapeT_co, _DTypeT_co]):
     @overload
     def dot[ArrayT: ndarray](self, b: ArrayLike, /, out: ArrayT) -> ArrayT: ...
 
-    # `nonzero()` raises for 0d arrays/generics
-    def nonzero(self) -> tuple[ndarray[tuple[int], _dtype[intp]], ...]: ...
+    # keep in sync with `_core.fromnumeric.nonzero`
+    @overload  # ?d  (workaround)
+    def nonzero(self: ndarray[tuple[Never, Never, Never, Never]]) -> tuple[ndarray[_1D, _dtype[intp]], ...]: ...
+    @overload  # 1d
+    def nonzero(self: ndarray[_1D]) -> tuple[ndarray[_1D, _dtype[intp]]]: ...
+    @overload  # 2d
+    def nonzero(self: ndarray[_2D]) -> _2Tuple[ndarray[_1D, _dtype[intp]]]: ...
+    @overload  # 3d
+    def nonzero(self: ndarray[_3D]) -> _3Tuple[ndarray[_1D, _dtype[intp]]]: ...
+    @overload  # 3d
+    def nonzero(self) -> tuple[ndarray[_1D, _dtype[intp]], ...]: ...
 
     @overload
     def searchsorted(
@@ -2442,6 +3829,7 @@ class ndarray(_ArrayOrScalarCommon, Generic[_ShapeT_co, _DTypeT_co]):
         order: str | Sequence[str] | None = None,
         *,
         stable: py_bool | None = None,
+        descending: py_bool | None = None,
     ) -> None: ...
 
     # Keep in sync with `MaskedArray.trace`
@@ -3769,12 +5157,12 @@ class generic(_ArrayOrScalarCommon, Generic[_ItemT_co]):
     ) -> Never: ...
     def diagonal(self: Never, /, offset: L[0] = 0, axis1: L[0] = 0, axis2: L[1] = 1) -> Never: ...  # type: ignore[misc]
     def swapaxes(self: Never, axis1: Never, axis2: Never, /) -> Never: ...  # type: ignore[misc]
-    def sort(self: Never, /, axis: L[-1] = -1, kind: None = None, order: None = None, *, stable: None = None) -> Never: ...  # type: ignore[misc]
+    def sort(self: Never, /, axis: L[-1] = -1, kind: None = None, order: None = None, *, stable: None = None, descending: None = None) -> Never: ...  # type: ignore[misc]
     def nonzero(self: Never, /) -> Never: ...  # type: ignore[misc]
     def setfield(self: Never, val: Never, /, dtype: Never, offset: L[0] = 0) -> None: ...  # type: ignore[misc]
     def searchsorted(self: Never, v: Never, /, side: L["left"] = "left", sorter: None = None) -> Never: ...  # type: ignore[misc]
 
-    # NOTE: this wont't raise, but won't do anything either
+    # NOTE: this won't raise, but won't do anything either
     @overload
     @deprecated("Resizing a NumPy generic inplace has been deprecated in NumPy 2.5")
     def resize(self, /, *, refcheck: py_bool = True) -> None: ...
@@ -4062,6 +5450,100 @@ class number(generic[_NumberItemT_co], Generic[_NBitT, _NumberItemT_co]):
     def __ge__(self, other: _ArrayLikeNumber_co | _NestedSequence[_SupportsLE], /) -> NDArray[bool_]: ...
     @overload
     def __ge__(self, other: _SupportsLE, /) -> bool_: ...
+
+    # keep in sync with `number.sum`
+    @override  # type: ignore[override]
+    @overload  # out: None (default)
+    def prod(
+        self,
+        axis: _ShapeLike | None = None,
+        dtype: None = None,
+        out: None = None,
+        *,
+        keepdims: py_bool | _NoValueType = ...,
+        initial: _NumberLike_co | _NoValueType = ...,
+        where: _ArrayLikeBool_co | _NoValueType = ...,
+    ) -> Self: ...
+    @overload  # dtype: <given> (keyword)
+    def prod(
+        self,
+        axis: _ShapeLike | None = None,
+        *,
+        dtype: DTypeLike,
+        out: None = None,
+        keepdims: py_bool | _NoValueType = ...,
+        initial: _NumberLike_co | _NoValueType = ...,
+        where: _ArrayLikeBool_co | _NoValueType = ...,
+    ) -> Any: ...
+    @overload  # dtype: <given>  (positional)
+    def prod(
+        self,
+        axis: _ShapeLike | None,
+        dtype: DTypeLike,
+        out: None = None,
+        *,
+        keepdims: py_bool | _NoValueType = ...,
+        initial: _NumberLike_co | _NoValueType = ...,
+        where: _ArrayLikeBool_co | _NoValueType = ...,
+    ) -> Any: ...
+    @overload  # out: <given>
+    def prod[ArrayT: ndarray](  # pyright: ignore[reportIncompatibleMethodOverride]
+        self,
+        axis: _ShapeLike | None = None,
+        dtype: DTypeLike | None = None,
+        *,
+        out: ArrayT,
+        keepdims: py_bool | _NoValueType = ...,
+        initial: _NumberLike_co | _NoValueType = ...,
+        where: _ArrayLikeBool_co | _NoValueType = ...,
+    ) -> ArrayT: ...
+
+    # keep in sync with `number.prod`
+    @override  # type: ignore[override]
+    @overload  # out: None (default)
+    def sum(
+        self,
+        axis: _ShapeLike | None = None,
+        dtype: None = None,
+        out: None = None,
+        *,
+        keepdims: py_bool | _NoValueType = ...,
+        initial: _NumberLike_co | _NoValueType = ...,
+        where: _ArrayLikeBool_co | _NoValueType = ...,
+    ) -> Self: ...
+    @overload  # dtype: <given> (keyword)
+    def sum(
+        self,
+        axis: _ShapeLike | None = None,
+        *,
+        dtype: DTypeLike,
+        out: None = None,
+        keepdims: py_bool | _NoValueType = ...,
+        initial: _NumberLike_co | _NoValueType = ...,
+        where: _ArrayLikeBool_co | _NoValueType = ...,
+    ) -> Any: ...
+    @overload  # dtype: <given>  (positional)
+    def sum(
+        self,
+        axis: _ShapeLike | None,
+        dtype: DTypeLike,
+        out: None = None,
+        *,
+        keepdims: py_bool | _NoValueType = ...,
+        initial: _NumberLike_co | _NoValueType = ...,
+        where: _ArrayLikeBool_co | _NoValueType = ...,
+    ) -> Any: ...
+    @overload  # out: <given>
+    def sum[ArrayT: ndarray](  # pyright: ignore[reportIncompatibleMethodOverride]
+        self,
+        axis: _ShapeLike | None = None,
+        dtype: DTypeLike | None = None,
+        *,
+        out: ArrayT,
+        keepdims: py_bool | _NoValueType = ...,
+        initial: _NumberLike_co | _NoValueType = ...,
+        where: _ArrayLikeBool_co | _NoValueType = ...,
+    ) -> ArrayT: ...
 
 class bool(generic[_BoolItemT_co], Generic[_BoolItemT_co]):
     @property
@@ -4357,6 +5839,100 @@ class bool(generic[_BoolItemT_co], Generic[_BoolItemT_co]):
     def __ge__(self, other: _ArrayLikeNumber_co | _NestedSequence[_SupportsLE], /) -> NDArray[bool_]: ...
     @overload
     def __ge__(self, other: _SupportsLE, /) -> bool_: ...
+
+    # keep in sync with `bool.sum`
+    @override  # type: ignore[override]
+    @overload  # out: None (default)
+    def prod(
+        self,
+        axis: _ShapeLike | None = None,
+        dtype: None = None,
+        out: None = None,
+        *,
+        keepdims: py_bool | _NoValueType = ...,
+        initial: _NumberLike_co | _NoValueType = ...,
+        where: _ArrayLikeBool_co | _NoValueType = ...,
+    ) -> int_: ...
+    @overload  # dtype: <given> (keyword)
+    def prod(
+        self,
+        axis: _ShapeLike | None = None,
+        *,
+        dtype: DTypeLike,
+        out: None = None,
+        keepdims: py_bool | _NoValueType = ...,
+        initial: _NumberLike_co | _NoValueType = ...,
+        where: _ArrayLikeBool_co | _NoValueType = ...,
+    ) -> Any: ...
+    @overload  # dtype: <given>  (positional)
+    def prod(
+        self,
+        axis: _ShapeLike | None,
+        dtype: DTypeLike,
+        out: None = None,
+        *,
+        keepdims: py_bool | _NoValueType = ...,
+        initial: _NumberLike_co | _NoValueType = ...,
+        where: _ArrayLikeBool_co | _NoValueType = ...,
+    ) -> Any: ...
+    @overload  # out: <given>
+    def prod[ArrayT: ndarray](  # pyright: ignore[reportIncompatibleMethodOverride]
+        self,
+        axis: _ShapeLike | None = None,
+        dtype: DTypeLike | None = None,
+        *,
+        out: ArrayT,
+        keepdims: py_bool | _NoValueType = ...,
+        initial: _NumberLike_co | _NoValueType = ...,
+        where: _ArrayLikeBool_co | _NoValueType = ...,
+    ) -> ArrayT: ...
+
+    # keep in sync with `bool.prod`
+    @override  # type: ignore[override]
+    @overload  # out: None (default)
+    def sum(
+        self,
+        axis: _ShapeLike | None = None,
+        dtype: None = None,
+        out: None = None,
+        *,
+        keepdims: py_bool | _NoValueType = ...,
+        initial: _IntLike_co | _NoValueType = ...,
+        where: _ArrayLikeBool_co | _NoValueType = ...,
+    ) -> int_: ...
+    @overload  # dtype: <given> (keyword)
+    def sum(
+        self,
+        axis: _ShapeLike | None = None,
+        *,
+        dtype: DTypeLike,
+        out: None = None,
+        keepdims: py_bool | _NoValueType = ...,
+        initial: _NumberLike_co | _NoValueType = ...,
+        where: _ArrayLikeBool_co | _NoValueType = ...,
+    ) -> Any: ...
+    @overload  # dtype: <given>  (positional)
+    def sum(
+        self,
+        axis: _ShapeLike | None,
+        dtype: DTypeLike,
+        out: None = None,
+        *,
+        keepdims: py_bool | _NoValueType = ...,
+        initial: _IntLike_co | _NoValueType = ...,
+        where: _ArrayLikeBool_co | _NoValueType = ...,
+    ) -> Any: ...
+    @overload  # out: <given>
+    def sum[ArrayT: ndarray](  # pyright: ignore[reportIncompatibleMethodOverride]
+        self,
+        axis: _ShapeLike | None = None,
+        dtype: DTypeLike | None = None,
+        *,
+        out: ArrayT,
+        keepdims: py_bool | _NoValueType = ...,
+        initial: _NumberLike_co | _NoValueType = ...,
+        where: _ArrayLikeBool_co | _NoValueType = ...,
+    ) -> ArrayT: ...
 
 # NOTE: This should _not_ be `Final[_]`, `_: TypeAlias`, or `type _`
 bool_ = bool
@@ -5221,6 +6797,9 @@ class float64(floating[_64Bit], float):  # type: ignore[misc]
     def __divmod__(self, other: _Float64_co, /) -> _2Tuple[float64]: ...
     def __rdivmod__(self, other: _Float64_co, /) -> _2Tuple[float64]: ...  # type: ignore[misc]
 
+float96 = floating[_96Bit]
+float128 = floating[_128Bit]
+
 half = float16
 single = float32
 double = float64
@@ -5384,6 +6963,9 @@ class complex128(complexfloating[_64Bit, _64Bit], complex):
     def __pow__[NBitT: NBitBase](self, other: complexfloating[NBitT], mod: None = None, /) -> complexfloating[NBitT | _64Bit]: ...
     def __rpow__(self, other: _Complex128_co, mod: None = None, /) -> complex128: ...  # type: ignore[override]
 
+complex192 = complexfloating[_96Bit]
+complex256 = complexfloating[_128Bit]
+
 csingle = complex64
 cdouble = complex128
 clongdouble = complexfloating[_NBitLongDouble]
@@ -5395,26 +6977,60 @@ class timedelta64(_IntegralMixin, generic[_TD64ItemT_co], Generic[_TD64ItemT_co]
     def nbytes(self) -> L[8]: ...
 
     @overload
-    def __new__(cls, value: _TD64ItemT_co | timedelta64[_TD64ItemT_co], /) -> Self: ...
+    def __new__(cls, value: timedelta64[_TD64ItemT_co], /) -> Self: ...
     @overload
+    @deprecated(
+        "Using 'generic' unit for NumPy timedelta is deprecated, and will raise an error in the future. "
+        "Please use a specific units instead."
+    )
+    def __new__(cls, value: _TD64ItemT_co, /) -> Self: ...
+    @overload
+    @deprecated(
+        "Using 'generic' unit for NumPy timedelta is deprecated, and will raise an error in the future. "
+        "Please use a specific units instead."
+    )
     def __new__(cls, /) -> timedelta64[L[0]]: ...
     @overload
     def __new__(cls, value: _NaTValue | None, format: _TimeUnitSpec[_TD64Unit], /) -> timedelta64[None]: ...
     @overload
-    def __new__(cls, value: L[0], format: _TimeUnitSpec[_IntTD64Unit] = ..., /) -> timedelta64[L[0]]: ...
+    @deprecated(
+        "Using 'generic' unit for NumPy timedelta is deprecated, and will raise an error in the future. "
+        "Please use a specific units instead."
+    )
+    def __new__(cls, value: L[0], /) -> timedelta64[L[0]]: ...
     @overload
-    def __new__(cls, value: _IntLike_co, format: _TimeUnitSpec[_IntTD64Unit] = ..., /) -> timedelta64[int]: ...
+    def __new__(cls, value: L[0], format: _TimeUnitSpec[_IntTD64Unit], /) -> timedelta64[L[0]]: ...
+    @overload
+    @deprecated(
+        "Using 'generic' unit for NumPy timedelta is deprecated, and will raise an error in the future. "
+        "Please use a specific units instead."
+    )
+    def __new__(cls, value: _IntLike_co, /) -> timedelta64[int]: ...
+    @overload
+    def __new__(cls, value: _IntLike_co, format: _TimeUnitSpec[_IntTD64Unit], /) -> timedelta64[int]: ...
     @overload
     def __new__(cls, value: dt.timedelta, format: _TimeUnitSpec[_IntTimeUnit], /) -> timedelta64[int]: ...
+    @overload
+    @deprecated(
+        "Using 'generic' unit for NumPy timedelta is deprecated, and will raise an error in the future. "
+        "Please use a specific units instead."
+    )
+    def __new__(cls, value: dt.timedelta | _IntLike_co, /) -> timedelta64[dt.timedelta]: ...
     @overload
     def __new__(
         cls,
         value: dt.timedelta | _IntLike_co,
-        format: _TimeUnitSpec[_NativeTD64Unit] = ...,
+        format: _TimeUnitSpec[_NativeTD64Unit],
         /,
     ) -> timedelta64[dt.timedelta]: ...
     @overload
-    def __new__(cls, value: _ConvertibleToTD64, format: _TimeUnitSpec[_TD64Unit] = ..., /) -> timedelta64: ...
+    @deprecated(
+        "Using 'generic' unit for NumPy timedelta is deprecated, and will raise an error in the future. "
+        "Please use a specific units instead."
+    )
+    def __new__(cls, value: _ConvertibleToTD64, /) -> timedelta64: ...
+    @overload
+    def __new__(cls, value: _ConvertibleToTD64, format: _TimeUnitSpec[_TD64Unit], /) -> timedelta64: ...
 
     # inherited at runtime from `signedinteger`
     def __class_getitem__(cls, type_arg: type | object, /) -> GenericAlias: ...
@@ -5430,9 +7046,11 @@ class timedelta64(_IntegralMixin, generic[_TD64ItemT_co], Generic[_TD64ItemT_co]
 
     #
     @overload
-    def __add__(self: timedelta64[Never], x: timedelta64[int | dt.timedelta] | _IntLike_co, /) -> timedelta64: ...
+    def __add__(self: timedelta64[Never], x: timedelta64[int | dt.timedelta], /) -> timedelta64: ...
     @overload
-    def __add__(self: timedelta64[None], x: _TD64Like_co, /) -> timedelta64[None]: ...
+    @overload
+    def __add__(self: timedelta64[None], x: timedelta64, /) -> timedelta64[None]: ...
+    @overload
     @overload
     def __add__(self: timedelta64[int | dt.timedelta], x: timedelta64[Never], /) -> timedelta64: ...
     @overload
@@ -5447,15 +7065,20 @@ class timedelta64(_IntegralMixin, generic[_TD64ItemT_co], Generic[_TD64ItemT_co]
     ) -> AnyDateOrTimeT: ...
     @overload
     def __add__[AnyItemT: (dt.timedelta, int, None, _TD64Item)](
-        self: timedelta64[AnyItemT], x: timedelta64[AnyItemT] | _IntLike_co, /
+        self: timedelta64[AnyItemT], x: timedelta64[AnyItemT], /
+    ) -> timedelta64[AnyItemT]: ...
+    @overload
+    @deprecated("Adding bare integers to NumPy timedelta is deprecated, and will raise an error in the future.")
+    def __add__[AnyItemT: (dt.timedelta, int, None, _TD64Item)](
+        self: timedelta64[AnyItemT], x: _IntLike_co, /
     ) -> timedelta64[AnyItemT]: ...
     __radd__ = __add__
 
     #
     @overload
-    def __sub__(self: timedelta64[Never], b: timedelta64[int | dt.timedelta] | _IntLike_co, /) -> timedelta64: ...
+    def __sub__(self: timedelta64[Never], b: timedelta64[int | dt.timedelta], /) -> timedelta64: ...
     @overload
-    def __sub__(self: timedelta64[None], b: _TD64Like_co, /) -> timedelta64[None]: ...
+    def __sub__(self: timedelta64[None], b: timedelta64, /) -> timedelta64[None]: ...
     @overload
     def __sub__(self: timedelta64[int | dt.timedelta], b: timedelta64[Never], /) -> timedelta64: ...
     @overload
@@ -5468,15 +7091,20 @@ class timedelta64(_IntegralMixin, generic[_TD64ItemT_co], Generic[_TD64ItemT_co]
     def __sub__(self: timedelta64[dt.timedelta], b: dt.timedelta, /) -> dt.timedelta: ...
     @overload
     def __sub__[AnyItemT: (dt.timedelta, int, None, _TD64Item)](
-        self: timedelta64[AnyItemT], b: timedelta64[AnyItemT] | _IntLike_co, /
+        self: timedelta64[AnyItemT], b: timedelta64[AnyItemT], /
+    ) -> timedelta64[AnyItemT]: ...
+    @overload
+    @deprecated("Subtracting bare integers from NumPy timedelta is deprecated, and will raise an error in the future.")
+    def __sub__[AnyItemT: (dt.timedelta, int, None, _TD64Item)](
+        self: timedelta64[AnyItemT], b: _IntLike_co, /
     ) -> timedelta64[AnyItemT]: ...
 
     # NOTE: subtraction is not commutative, so __rsub__ differs from __sub__.
     # This confuses mypy, so we ignore the [misc] errors it reports.
     @overload
-    def __rsub__(self: timedelta64[Never], a: timedelta64[int | dt.timedelta] | _IntLike_co, /) -> timedelta64: ...
+    def __rsub__(self: timedelta64[Never], a: timedelta64[int | dt.timedelta], /) -> timedelta64: ...
     @overload
-    def __rsub__(self: timedelta64[None], a: _TD64Like_co, /) -> timedelta64[None]: ...
+    def __rsub__(self: timedelta64[None], a: timedelta64, /) -> timedelta64[None]: ...
     @overload
     def __rsub__[AnyDateT: (dt.datetime, dt.date)](self: timedelta64[dt.timedelta], a: AnyDateT, /) -> AnyDateT: ...
     @overload
@@ -5484,8 +7112,13 @@ class timedelta64(_IntegralMixin, generic[_TD64ItemT_co], Generic[_TD64ItemT_co]
         self: timedelta64[dt.timedelta], a: timedelta64[AnyItemT], /
     ) -> timedelta64[AnyItemT]: ...
     @overload
-    def __rsub__[AnyItemT: (dt.timedelta, int, None, _TD64Item)](  # type: ignore[misc]
-        self: timedelta64[AnyItemT], a: timedelta64[AnyItemT] | _IntLike_co, /
+    def __rsub__[AnyItemT: (dt.timedelta, int, None, _TD64Item)](
+        self: timedelta64[AnyItemT], a: timedelta64[AnyItemT], /
+    ) -> timedelta64[AnyItemT]: ...
+    @overload
+    @deprecated("Subtracting NumPy timedelta from bare integers is deprecated, and will raise an error in the future.")
+    def __rsub__[AnyItemT: (dt.timedelta, int, None, _TD64Item)](
+        self: timedelta64[AnyItemT], a: _IntLike_co, /
     ) -> timedelta64[AnyItemT]: ...
     @overload
     def __rsub__(self, a: timedelta64[None], /) -> timedelta64[None]: ...  # type: ignore[overload-cannot-match]
@@ -5601,33 +7234,105 @@ class timedelta64(_IntegralMixin, generic[_TD64ItemT_co], Generic[_TD64ItemT_co]
     @overload
     def __rfloordiv__(self: timedelta64[dt.timedelta], a: dt.timedelta, /) -> int: ...
 
+    # these mypy `has_type` errors appear to be false positives
     @overload
-    def __lt__(self, other: _TD64Like_co, /) -> bool_: ...
+    def __lt__(self, other: timedelta64, /) -> bool_: ...  # type: ignore[has-type]
     @overload
-    def __lt__(self, other: _ArrayLikeTD64_co | _NestedSequence[_SupportsGT], /) -> NDArray[bool_]: ...
+    @deprecated("Comparing NumPy timedelta with bare integers is deprecated, and will raise an error in the future.")
+    def __lt__(self, other: _IntLike_co, /) -> bool_: ...
+    @overload
+    @deprecated("Comparing NumPy timedelta with bare integers is deprecated, and will raise an error in the future.")
+    def __lt__(self, other: _ArrayLikeInt_co, /) -> NDArray[bool_]: ...
+    @overload
+    def __lt__(self, other: _ArrayLike[timedelta64] | _NestedSequence[_SupportsGT], /) -> NDArray[bool_]: ...
     @overload
     def __lt__(self, other: _SupportsGT, /) -> bool_: ...
 
     @overload
-    def __le__(self, other: _TD64Like_co, /) -> bool_: ...
+    def __le__(self, other: timedelta64, /) -> bool_: ...  # type: ignore[has-type]
     @overload
-    def __le__(self, other: _ArrayLikeTD64_co | _NestedSequence[_SupportsGE], /) -> NDArray[bool_]: ...
+    @deprecated("Comparing NumPy timedelta with bare integers is deprecated, and will raise an error in the future.")
+    def __le__(self, other: _IntLike_co, /) -> bool_: ...
     @overload
-    def __le__(self, other: _SupportsGT, /) -> bool_: ...
+    @deprecated("Comparing NumPy timedelta with bare integers is deprecated, and will raise an error in the future.")
+    def __le__(self, other: _ArrayLikeInt_co, /) -> NDArray[bool_]: ...
+    @overload
+    def __le__(self, other: _ArrayLike[timedelta64] | _NestedSequence[_SupportsGE], /) -> NDArray[bool_]: ...
+    @overload
+    def __le__(self, other: _SupportsGE, /) -> bool_: ...
 
     @overload
-    def __gt__(self, other: _TD64Like_co, /) -> bool_: ...
+    def __gt__(self, other: timedelta64, /) -> bool_: ...
     @overload
-    def __gt__(self, other: _ArrayLikeTD64_co | _NestedSequence[_SupportsLT], /) -> NDArray[bool_]: ...
+    @deprecated("Comparing NumPy timedelta with bare integers is deprecated, and will raise an error in the future.")
+    def __gt__(self, other: _IntLike_co, /) -> bool_: ...
     @overload
-    def __gt__(self, other: _SupportsGT, /) -> bool_: ...
+    @deprecated("Comparing NumPy timedelta with bare integers is deprecated, and will raise an error in the future.")
+    def __gt__(self, other: _ArrayLikeInt_co, /) -> NDArray[bool_]: ...
+    @overload
+    def __gt__(self, other: _ArrayLike[timedelta64] | _NestedSequence[_SupportsLT], /) -> NDArray[bool_]: ...
+    @overload
+    def __gt__(self, other: _SupportsLT, /) -> bool_: ...
 
     @overload
-    def __ge__(self, other: _TD64Like_co, /) -> bool_: ...
+    def __ge__(self, other: timedelta64, /) -> bool_: ...
     @overload
-    def __ge__(self, other: _ArrayLikeTD64_co | _NestedSequence[_SupportsLE], /) -> NDArray[bool_]: ...
+    @deprecated("Comparing NumPy timedelta with bare integers is deprecated, and will raise an error in the future.")
+    def __ge__(self, other: _IntLike_co, /) -> bool_: ...
     @overload
-    def __ge__(self, other: _SupportsGT, /) -> bool_: ...
+    @deprecated("Comparing NumPy timedelta with bare integers is deprecated, and will raise an error in the future.")
+    def __ge__(self, other: _ArrayLikeInt_co, /) -> NDArray[bool_]: ...
+    @overload
+    def __ge__(self, other: _ArrayLike[timedelta64] | _NestedSequence[_SupportsLE], /) -> NDArray[bool_]: ...
+    @overload
+    def __ge__(self, other: _SupportsLE, /) -> bool_: ...
+
+    # keep in sync with `number.sum`
+    @override  # type: ignore[override]
+    @overload  # out: None (default)
+    def sum(
+        self,
+        axis: _ShapeLike | None = None,
+        dtype: None = None,
+        out: None = None,
+        *,
+        keepdims: py_bool | _NoValueType = ...,
+        initial: _IntLike_co | _NoValueType = ...,
+        where: _ArrayLikeBool_co | _NoValueType = ...,
+    ) -> Self: ...
+    @overload  # dtype: <given> (keyword)
+    def sum(
+        self,
+        axis: _ShapeLike | None = None,
+        *,
+        dtype: DTypeLike,
+        out: None = None,
+        keepdims: py_bool | _NoValueType = ...,
+        initial: _NumberLike_co | _NoValueType = ...,
+        where: _ArrayLikeBool_co | _NoValueType = ...,
+    ) -> Any: ...
+    @overload  # dtype: <given>  (positional)
+    def sum(
+        self,
+        axis: _ShapeLike | None,
+        dtype: DTypeLike,
+        out: None = None,
+        *,
+        keepdims: py_bool | _NoValueType = ...,
+        initial: _IntLike_co | _NoValueType = ...,
+        where: _ArrayLikeBool_co | _NoValueType = ...,
+    ) -> Any: ...
+    @overload  # out: <given>
+    def sum[ArrayT: ndarray](  # pyright: ignore[reportIncompatibleMethodOverride]
+        self,
+        axis: _ShapeLike | None = None,
+        dtype: DTypeLike | None = None,
+        *,
+        out: ArrayT,
+        keepdims: py_bool | _NoValueType = ...,
+        initial: _NumberLike_co | _NoValueType = ...,
+        where: _ArrayLikeBool_co | _NoValueType = ...,
+    ) -> ArrayT: ...
 
 class datetime64(_RealMixin, generic[_DT64ItemT_co], Generic[_DT64ItemT_co]):
     @property
@@ -5646,13 +7351,13 @@ class datetime64(_RealMixin, generic[_DT64ItemT_co], Generic[_DT64ItemT_co]):
     @overload
     def __new__(cls, value: _DT64Date, format: _TimeUnitSpec[_DateUnit] = ..., /) -> datetime64[dt.date]: ...
     @overload
-    def __new__(cls, value: int | bytes | str | dt.date, format: _TimeUnitSpec[_IntTimeUnit], /) -> datetime64[int]: ...
+    def __new__(cls, value: int | bytes | str | dt.date | datetime64, format: _TimeUnitSpec[_IntTimeUnit], /) -> datetime64[int]: ...
     @overload
-    def __new__(  # type: ignore[overload-cannot-match]
-        cls, value: int | bytes | str | dt.date, format: _TimeUnitSpec[_NativeTimeUnit], /
+    def __new__(
+        cls, value: int | bytes | str | dt.date | datetime64, format: _TimeUnitSpec[_NativeTimeUnit], /
     ) -> datetime64[dt.datetime]: ...
     @overload
-    def __new__(cls, value: int | bytes | str | dt.date, format: _TimeUnitSpec[_DateUnit], /) -> datetime64[dt.date]: ...  # type: ignore[overload-cannot-match]
+    def __new__(cls, value: int | bytes | str | dt.date | datetime64, format: _TimeUnitSpec[_DateUnit], /) -> datetime64[dt.date]: ...
     @overload
     def __new__(cls, value: bytes | str | dt.date | None, format: _TimeUnitSpec[_TD64Unit] = ..., /) -> Self: ...
 
@@ -5825,6 +7530,13 @@ class bytes_(character[bytes], bytes):  # type: ignore[misc]
     @override
     def __hash__(self, /) -> int: ...
 
+    # re-declare inherited `bytes.__getitem__` shadowed by `generic.__getitem__`
+    @override  # type: ignore[override]
+    @overload
+    def __getitem__(self, key: SupportsIndex, /) -> int: ...
+    @overload
+    def __getitem__(self, key: slice[SupportsIndex | None], /) -> bytes: ...  # pyright: ignore[reportIncompatibleMethodOverride]
+
     #
     def __bytes__(self, /) -> bytes: ...
 
@@ -5837,6 +7549,10 @@ class str_(character[str], str):  # type: ignore[misc]
     #
     @override
     def __hash__(self, /) -> int: ...
+
+    # re-declare inherited `str.__getitem__` shadowed by `generic.__getitem__`
+    @override
+    def __getitem__(self, key: SupportsIndex | slice[SupportsIndex | None], /) -> str: ...  # type: ignore[override]
 
 # See `numpy._typing._ufunc` for more concrete nin-/nout-specific stubs
 @final
@@ -5925,115 +7641,21 @@ class ufunc:
     ) -> tuple[dtype, ...]: ...
 
 # Parameters: `__name__`, `ntypes` and `identity`
-absolute: _UFunc_Nin1_Nout1[L["absolute"], L[20], None]
 add: _UFunc_Nin2_Nout1[L["add"], L[22], L[0]]
-arccos: _UFunc_Nin1_Nout1[L["arccos"], L[8], None]
-arccosh: _UFunc_Nin1_Nout1[L["arccosh"], L[8], None]
-arcsin: _UFunc_Nin1_Nout1[L["arcsin"], L[8], None]
-arcsinh: _UFunc_Nin1_Nout1[L["arcsinh"], L[8], None]
-arctan2: _UFunc_Nin2_Nout1[L["arctan2"], L[5], None]
-arctan: _UFunc_Nin1_Nout1[L["arctan"], L[8], None]
-arctanh: _UFunc_Nin1_Nout1[L["arctanh"], L[8], None]
-bitwise_and: _UFunc_Nin2_Nout1[L["bitwise_and"], L[12], L[-1]]
-bitwise_count: _UFunc_Nin1_Nout1[L["bitwise_count"], L[11], None]
-bitwise_or: _UFunc_Nin2_Nout1[L["bitwise_or"], L[12], L[0]]
-bitwise_xor: _UFunc_Nin2_Nout1[L["bitwise_xor"], L[12], L[0]]
-cbrt: _UFunc_Nin1_Nout1[L["cbrt"], L[5], None]
-ceil: _UFunc_Nin1_Nout1[L["ceil"], L[7], None]
-conjugate: _UFunc_Nin1_Nout1[L["conjugate"], L[18], None]
-copysign: _UFunc_Nin2_Nout1[L["copysign"], L[4], None]
-cos: _UFunc_Nin1_Nout1[L["cos"], L[9], None]
-cosh: _UFunc_Nin1_Nout1[L["cosh"], L[8], None]
-deg2rad: _UFunc_Nin1_Nout1[L["deg2rad"], L[5], None]
-degrees: _UFunc_Nin1_Nout1[L["degrees"], L[5], None]
-divide: _UFunc_Nin2_Nout1[L["divide"], L[11], None]
 divmod: _UFunc_Nin2_Nout2[L["divmod"], L[15], None]
-equal: _UFunc_Nin2_Nout1[L["equal"], L[23], None]
-exp2: _UFunc_Nin1_Nout1[L["exp2"], L[8], None]
-exp: _UFunc_Nin1_Nout1[L["exp"], L[10], None]
-expm1: _UFunc_Nin1_Nout1[L["expm1"], L[8], None]
-fabs: _UFunc_Nin1_Nout1[L["fabs"], L[5], None]
-float_power: _UFunc_Nin2_Nout1[L["float_power"], L[4], None]
-floor: _UFunc_Nin1_Nout1[L["floor"], L[7], None]
-floor_divide: _UFunc_Nin2_Nout1[L["floor_divide"], L[21], None]
 fmax: _UFunc_Nin2_Nout1[L["fmax"], L[21], None]
 fmin: _UFunc_Nin2_Nout1[L["fmin"], L[21], None]
-fmod: _UFunc_Nin2_Nout1[L["fmod"], L[15], None]
-frexp: _UFunc_Nin1_Nout2[L["frexp"], L[4], None]
-gcd: _UFunc_Nin2_Nout1[L["gcd"], L[11], L[0]]
-greater: _UFunc_Nin2_Nout1[L["greater"], L[23], None]
-greater_equal: _UFunc_Nin2_Nout1[L["greater_equal"], L[23], None]
-heaviside: _UFunc_Nin2_Nout1[L["heaviside"], L[4], None]
-hypot: _UFunc_Nin2_Nout1[L["hypot"], L[5], L[0]]
-invert: _UFunc_Nin1_Nout1[L["invert"], L[12], None]
-isfinite: _UFunc_Nin1_Nout1[L["isfinite"], L[20], None]
-isinf: _UFunc_Nin1_Nout1[L["isinf"], L[20], None]
-isnan: _UFunc_Nin1_Nout1[L["isnan"], L[20], None]
-isnat: _UFunc_Nin1_Nout1[L["isnat"], L[2], None]
-lcm: _UFunc_Nin2_Nout1[L["lcm"], L[11], None]
-ldexp: _UFunc_Nin2_Nout1[L["ldexp"], L[8], None]
-left_shift: _UFunc_Nin2_Nout1[L["left_shift"], L[11], None]
-less: _UFunc_Nin2_Nout1[L["less"], L[23], None]
-less_equal: _UFunc_Nin2_Nout1[L["less_equal"], L[23], None]
-log10: _UFunc_Nin1_Nout1[L["log10"], L[8], None]
-log1p: _UFunc_Nin1_Nout1[L["log1p"], L[8], None]
-log2: _UFunc_Nin1_Nout1[L["log2"], L[8], None]
-log: _UFunc_Nin1_Nout1[L["log"], L[10], None]
-logaddexp2: _UFunc_Nin2_Nout1[L["logaddexp2"], L[4], float]
-logaddexp: _UFunc_Nin2_Nout1[L["logaddexp"], L[4], float]
-logical_and: _UFunc_Nin2_Nout1[L["logical_and"], L[20], L[True]]
-logical_not: _UFunc_Nin1_Nout1[L["logical_not"], L[20], None]
-logical_or: _UFunc_Nin2_Nout1[L["logical_or"], L[20], L[False]]
-logical_xor: _UFunc_Nin2_Nout1[L["logical_xor"], L[19], L[False]]
 matmul: _GUFunc_Nin2_Nout1[L["matmul"], L[19], None, L["(n?,k),(k,m?)->(n?,m?)"]]
 matvec: _GUFunc_Nin2_Nout1[L["matvec"], L[19], None, L["(m,n),(n)->(m)"]]
 maximum: _UFunc_Nin2_Nout1[L["maximum"], L[21], None]
 minimum: _UFunc_Nin2_Nout1[L["minimum"], L[21], None]
-modf: _UFunc_Nin1_Nout2[L["modf"], L[4], None]
 multiply: _UFunc_Nin2_Nout1[L["multiply"], L[23], L[1]]
-negative: _UFunc_Nin1_Nout1[L["negative"], L[19], None]
-nextafter: _UFunc_Nin2_Nout1[L["nextafter"], L[4], None]
-not_equal: _UFunc_Nin2_Nout1[L["not_equal"], L[23], None]
-positive: _UFunc_Nin1_Nout1[L["positive"], L[19], None]
-power: _UFunc_Nin2_Nout1[L["power"], L[18], None]
-rad2deg: _UFunc_Nin1_Nout1[L["rad2deg"], L[5], None]
-radians: _UFunc_Nin1_Nout1[L["radians"], L[5], None]
-reciprocal: _UFunc_Nin1_Nout1[L["reciprocal"], L[18], None]
-remainder: _UFunc_Nin2_Nout1[L["remainder"], L[16], None]
-right_shift: _UFunc_Nin2_Nout1[L["right_shift"], L[11], None]
-rint: _UFunc_Nin1_Nout1[L["rint"], L[10], None]
-sign: _UFunc_Nin1_Nout1[L["sign"], L[19], None]
-signbit: _UFunc_Nin1_Nout1[L["signbit"], L[4], None]
-sin: _UFunc_Nin1_Nout1[L["sin"], L[9], None]
-sinh: _UFunc_Nin1_Nout1[L["sinh"], L[8], None]
-spacing: _UFunc_Nin1_Nout1[L["spacing"], L[4], None]
-sqrt: _UFunc_Nin1_Nout1[L["sqrt"], L[10], None]
-square: _UFunc_Nin1_Nout1[L["square"], L[18], None]
 subtract: _UFunc_Nin2_Nout1[L["subtract"], L[21], None]
-tan: _UFunc_Nin1_Nout1[L["tan"], L[8], None]
-tanh: _UFunc_Nin1_Nout1[L["tanh"], L[8], None]
-trunc: _UFunc_Nin1_Nout1[L["trunc"], L[7], None]
 vecdot: _GUFunc_Nin2_Nout1[L["vecdot"], L[19], None, L["(n),(n)->()"]]
 vecmat: _GUFunc_Nin2_Nout1[L["vecmat"], L[19], None, L["(n),(n,m)->(m)"]]
 
-abs = absolute
-acos = arccos
-acosh = arccosh
-asin = arcsin
-asinh = arcsinh
-atan = arctan
-atanh = arctanh
-atan2 = arctan2
 concat = concatenate
-bitwise_left_shift = left_shift
-bitwise_not = invert
-bitwise_invert = invert
-bitwise_right_shift = right_shift
-conj = conjugate
-mod = remainder
 permute_dims = transpose
-pow = power
-true_divide = divide
 
 # TODO: The type of each `__next__` and `iters` return-type depends
 # on the length and dtype of `args`; we can't describe this behavior yet

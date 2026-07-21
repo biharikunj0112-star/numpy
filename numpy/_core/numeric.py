@@ -485,15 +485,10 @@ def count_nonzero(a, axis=None, *, keepdims=False):
     """
     Counts the number of non-zero values in the array ``a``.
 
-    The word "non-zero" is in reference to the Python 2.x
-    built-in method ``__nonzero__()`` (renamed ``__bool__()``
-    in Python 3.x) of Python objects that tests an object's
-    "truthfulness". For example, any number is considered
-    truthful if it is nonzero, whereas any string is considered
-    truthful if it is not the empty string. Thus, this function
-    (recursively) counts how many elements in ``a`` (and in
-    sub-arrays thereof) have their ``__nonzero__()`` or ``__bool__()``
-    method evaluated to ``True``.
+    A non-zero value is one that evaluates to truthful in a boolean
+    context, including any non-zero number and any string that
+    is not empty. This function recursively counts how many elements
+    in ``a`` (and its sub-arrays) are non-zero values.
 
     Parameters
     ----------
@@ -541,7 +536,8 @@ def count_nonzero(a, axis=None, *, keepdims=False):
 
     a = asanyarray(a)
 
-    # TODO: this works around .astype(bool) not working properly (gh-9847)
+    # This is a performance optimization for character dtypes
+    # TODO: this can be removed if the legacy fixed-width string dtypes are ever removed
     if np.issubdtype(a.dtype, np.character):
         a_bool = a != a.dtype.type()
     else:
@@ -1024,6 +1020,7 @@ def tensordot(a, b, axes=2):
           second to `b`. Both elements array_like must be of the same length.
           Each axis may appear at most once; repeated axes are not allowed.
           For example, ``axes=([1, 1], [0, 0])`` is invalid.
+
     Returns
     -------
     output : ndarray

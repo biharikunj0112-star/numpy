@@ -223,7 +223,7 @@ these fragments in each commit message of a PR:
 Test building wheels
 ~~~~~~~~~~~~~~~~~~~~
 
-Numpy currently uses `cibuildwheel <https://cibuildwheel.readthedocs.io/en/stable/>`_
+NumPy currently uses `cibuildwheel <https://cibuildwheel.readthedocs.io/en/stable/>`_
 in order to build wheels through continuous integration services. To save resources, the
 cibuildwheel wheel builders are not run by default on every single PR or commit to main.
 
@@ -268,6 +268,10 @@ If your changes involve modifications to the API or addition/modification of a
 function, add a release note to the ``doc/release/upcoming_changes/``
 directory, following the instructions and format in the
 ``doc/release/upcoming_changes/README.rst`` file.
+
+Use the same prefix convention for your pull request title as for commit
+messages (e.g., ``BUG:``, ``ENH:``, ``DOC:``). This enables automated labeling
+of your PR.
 
 
 .. _workflow_PR_timeline:

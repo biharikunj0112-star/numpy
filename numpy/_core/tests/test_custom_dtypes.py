@@ -195,6 +195,26 @@ class TestSFloat:
         with pytest.raises(TypeError):
             np.add(a, a, out=c, casting="safe")
 
+    def test_sfloat_histogram_passes_dtype_class(self):
+        # Regression test for gh-31447.
+        #
+        # ``_unsigned_subtract`` used to forward a DType instance (from
+        # ``np.result_type``) to ``np.subtract``; the ufunc dispatcher
+        # rejects instances of non-legacy user DTypes.
+        #
+        # Expected behaviour:
+        #   pre-fix:  TypeError "Cannot pass a new user DType instance ..."
+        #   post-fix: TypeError "ufunc 'subtract' did not contain a loop"
+        #             (SF has no subtract loop; once the dispatcher
+        #             accepts the DType class, the missing-loop error
+        #             surfaces.)
+        from numpy.lib._histograms_impl import _unsigned_subtract
+        a = np.array([3.]).view(SF(1.))
+        b = np.array([1.]).view(SF(1.))
+        with pytest.raises(TypeError,
+                match="ufunc 'subtract' did not contain a loop"):
+            _unsigned_subtract(a, b)
+
     @pytest.mark.parametrize("ufunc",
             [np.logical_and, np.logical_or, np.logical_xor])
     def test_logical_ufuncs_casts_to_bool(self, ufunc):
@@ -303,6 +323,72 @@ class TestSFloat:
         # original is unchanged
         assert_array_equal(a.view(np.float64), [6., 4., 2.])
 
+    def test_partition(self):
+        a = self._get_array(1.)
+        a = a[::-1]  # reverse it
+
+        k = 1
+        a.partition(k)
+        before_k = a[:k].view(np.float64)
+        after_k = a[k:].view(np.float64)
+        assert_array_equal(np.sort(before_k), [1.])
+        assert_array_equal(np.sort(after_k), [2., 3.])
+
+        a.partition(k, descending=True)
+        before_k = a[:k].view(np.float64)
+        after_k = a[k:].view(np.float64)
+        assert_array_equal(np.sort(before_k), [3.])
+        assert_array_equal(np.sort(after_k), [1., 2.])
+
+        a = self._get_array(0.5)  # different factor
+        a = a[::2][::-1]  # reverse it
+        a.partition(k)
+        before_k = a[:k].view(np.float64)
+        after_k = a[k:].view(np.float64)
+        assert_array_equal(np.sort(before_k), [2.])
+        assert_array_equal(np.sort(after_k), [6.])
+
+        a = self._get_array(0.5, aligned=False)
+        a = a[::-1]  # reverse it
+        a.partition(k)
+        before_k = a[:k].view(np.float64)
+        after_k = a[k:].view(np.float64)
+        assert_array_equal(np.sort(before_k), [2.])
+        assert_array_equal(np.sort(after_k), [4., 6.])
+
+    def test_argpartition(self):
+        a = self._get_array(1.)
+        a = a[::-1]  # reverse it
+
+        k = 1
+        indices = a.argpartition(k)
+        before_k = a[indices[:k]].view(np.float64)
+        after_k = a[indices[k:]].view(np.float64)
+        assert_array_equal(np.sort(before_k), [1.])
+        assert_array_equal(np.sort(after_k), [2., 3.])
+
+        indices = a.argpartition(k, descending=True)
+        before_k = a[indices[:k]].view(np.float64)
+        after_k = a[indices[k:]].view(np.float64)
+        assert_array_equal(np.sort(before_k), [3.])
+        assert_array_equal(np.sort(after_k), [1., 2.])
+
+        a = self._get_array(0.5)  # different factor
+        a = a[::2][::-1]  # reverse it
+        indices = a.argpartition(k)
+        before_k = a[indices[:k]].view(np.float64)
+        after_k = a[indices[k:]].view(np.float64)
+        assert_array_equal(np.sort(before_k), [2.])
+        assert_array_equal(np.sort(after_k), [6.])
+
+        a = self._get_array(0.5, aligned=False)
+        a = a[::-1]  # reverse it
+        indices = a.argpartition(k)
+        before_k = a[indices[:k]].view(np.float64)
+        after_k = a[indices[k:]].view(np.float64)
+        assert_array_equal(np.sort(before_k), [2.])
+        assert_array_equal(np.sort(after_k), [4., 6.])
+
     def test_astype_class(self):
         # Very simple test that we accept `.astype()` also on the class.
         # ScaledFloat always returns the default descriptor, but it does
@@ -373,6 +459,12 @@ class TestSFloat:
         np.testing.assert_array_equal(
             arr.view(np.float64), arr2.view(np.float64))
 
+    def test_conjugate(self):
+        # Also user dtype can just return self if conjugate should be no-op.
+        arr = np.array([1.0, 2.0, 3.0], dtype=SF(1.0))
+        assert arr.conjugate() is arr
+
+
 @pytest.mark.thread_unsafe(
     reason="_ScaledFloatTestDType setup is thread-unsafe (gh-29850)"
 )
@@ -391,3 +483,13 @@ def test_type_pickle():
 
 def test_is_numeric():
     assert SF._is_numeric
+
+
+def test_structured_field_allowed():
+    # dtypes without per-instance state (no finalize slot) are allowed as
+    # structured dtype fields and as subarray dtype bases
+    dt = np.dtype([("a", SF(2.))])
+    arr = np.zeros(2, dt)
+    arr["a"] = [1., 2.]
+    assert_array_equal(arr["a"].astype(np.float64), [1., 2.])
+    assert np.dtype((SF(2.), 3)).subdtype[0] == SF(2.)

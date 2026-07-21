@@ -1,6 +1,7 @@
 import builtins
 import collections.abc
 import functools
+import operator
 import re
 import warnings
 
@@ -246,6 +247,16 @@ def rot90(m, k=1, axes=(0, 1)):
     if (axes[0] >= m.ndim or axes[0] < -m.ndim
         or axes[1] >= m.ndim or axes[1] < -m.ndim):
         raise ValueError(f"Axes={axes} out of range for array of ndim={m.ndim}.")
+
+    try:
+        k = operator.index(k)
+    except TypeError:
+        # DEPRECATED 2026-04-27, NumPy 2.5
+        msg = (f"Passing a value for k ({k!r}) that is not an integer type has been "
+               "deprecated in NumPy 2.5. The value will be cast to an integer.  In "
+               "the future this will be an error.")
+        warnings.warn(msg, DeprecationWarning, stacklevel=2)
+        k = int(k)
 
     k %= 4
 
@@ -1956,7 +1967,7 @@ def trim_zeros(filt, trim='fb', axis=None):
         returned that still contains all values which are not zero.
         If an axis is specified, `filt` will be sliced in that dimension only
         on the sides specified by `trim`. The remaining area will be the
-        smallest that still contains all values wich are not zero.
+        smallest that still contains all values which are not zero.
 
         .. versionadded:: 2.2.0
 
@@ -2114,11 +2125,11 @@ def place(arr, mask, vals):
     arr : ndarray
         Array to put data into.
     mask : array_like
-        Boolean mask array. Must have the same size as `a`.
+        Boolean mask array. Must have the same size as `arr`.
     vals : 1-D sequence
-        Values to put into `a`. Only the first N elements are used, where
+        Values to put into `arr`. Only the first N elements are used, where
         N is the number of True values in `mask`. If `vals` is smaller
-        than N, it will be repeated, and if elements of `a` are to be masked,
+        than N, it will be repeated, and if elements of `arr` are to be masked,
         this sequence must be non-empty.
 
     See Also
@@ -3937,10 +3948,9 @@ def median(a, axis=None, out=None, overwrite_input=False, keepdims=False):
     Returns
     -------
     median : ndarray
-        A new array holding the result. If the input contains integers
-        or floats smaller than ``float64``, then the output data-type is
-        ``np.float64``.  Otherwise, the data-type of the output is the
-        same as that of the input. If `out` is specified, that array is
+        A new array holding the result. If the input contains integers,
+        the output data-type is ``float64``. Otherwise, the output data-type
+        is the same as that of the input. If `out` is specified, that array is
         returned instead.
 
     See Also
@@ -4136,10 +4146,9 @@ def percentile(a,
         is a scalar. If multiple percentiles are given, first axis of
         the result corresponds to the percentiles. The other axes are
         the axes that remain after the reduction of `a`. If the input
-        contains integers or floats smaller than ``float64``, the output
-        data-type is ``float64``. Otherwise, the output data-type is the
-        same as that of the input. If `out` is specified, that array is
-        returned instead.
+        contains integers, the output data-type is ``float64``. Otherwise,
+        the output data-type is the same as that of the input. If `out`
+        is specified, that array is returned instead.
 
     See Also
     --------
@@ -4339,10 +4348,9 @@ def quantile(a,
         is a scalar. If multiple probability levels are given, first axis
         of the result corresponds to the quantiles. The other axes are
         the axes that remain after the reduction of `a`. If the input
-        contains integers or floats smaller than ``float64``, the output
-        data-type is ``float64``. Otherwise, the output data-type is the
-        same as that of the input. If `out` is specified, that array is
-        returned instead.
+        contains integers, the output data-type is ``float64``. Otherwise,
+        the output data-type is the same as that of the input. If `out` is
+        specified, that array is returned instead.
 
     See Also
     --------
@@ -5070,7 +5078,7 @@ def meshgrid(*xi, copy=True, sparse=False, indexing='xy'):
         ``(1, ..., 1, Ni, 1, ..., 1)``.  These sparse coordinate grids are
         intended to be used with :ref:`basics.broadcasting`.  When all
         coordinates are used in an expression, broadcasting still leads to a
-        fully-dimensonal result array.
+        fully-dimensional result array.
 
         Default is False.
 
@@ -5554,6 +5562,15 @@ def insert(arr, obj, values, axis=None):
         # Can safely cast the empty list to intp
         indices = indices.astype(intp)
 
+    if indices.size > 0:
+        min_idx = indices.min()
+        max_idx = indices.max()
+        if min_idx < -N or max_idx > N:
+            oob = min_idx if min_idx < -N else max_idx
+            raise IndexError(
+                f"index {oob} is out of bounds "
+                f"for axis {axis} with size {N}"
+            )
     indices[indices < 0] += N
 
     numnew = len(indices)

@@ -270,16 +270,23 @@ Array-protocol type strings (see :ref:`arrays.interface`)
    ``'L'``             unsigned long integer
    ``'q'``             (signed) long long integer
    ``'Q'``             unsigned long long integer
+   ``'n'``             signed :class:`intp`
+   ``'N'``             unsigned :class:`uintp`
+   ``'p'``             signed integer large enough for pointers
+   ``'P'``             unsigned integer large enough for pointers
+   ``'e'``             half precision
    ``'f'``             single precision
    ``'F'``             complex single precision
    ``'d'``             double precision
    ``'D'``             complex double precision
    ``'g'``             long precision
    ``'G'``             complex long double precision
-   ``'O'``             (Python) objects
    ``'S'``             zero-terminated bytes (not recommended)
    ``'U'``             Unicode string
    ``'V'``             raw data (:class:`void`)
+   ``'O'``             (Python) objects
+   ``'M'``             :class:`datetime64`
+   ``'m'``             :class:`timedelta64`
    ==================  ========================
 
    .. admonition:: Example
@@ -293,15 +300,6 @@ Array-protocol type strings (see :ref:`arrays.interface`)
          >>> dt = np.dtype('c16')  # 128-bit complex floating-point number
          >>> dt = np.dtype('S25')  # 25-length zero-terminated bytes
          >>> dt = np.dtype('U25')  # 25-character string
-
-   .. _string-dtype-note:
-
-   .. admonition:: Note on string types
-
-    For backward compatibility with existing code originally written to support
-    Python 2, ``S`` and ``a`` typestrings are zero-terminated bytes.
-    For unicode strings, use ``U``, `numpy.str_`.  For signed bytes that do not
-    need zero-termination ``b`` or ``i1`` can be used.
 
 String with comma-separated fields
    A short-hand notation for specifying the format of a structured data type is

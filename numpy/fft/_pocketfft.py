@@ -494,7 +494,7 @@ def irfft(a, n=None, axis=-1, norm=None, out=None):
 
     If you specify an `n` such that `a` must be zero-padded or truncated, the
     extra/removed values will be added/removed at high frequencies. One can
-    thus resample a series to `m` points via Fourier interpolation by:
+    thus resample a series to ``m`` points via Fourier interpolation by:
     ``a_resamp = irfft(rfft(a), m)``.
 
     The correct interpretation of the hermitian input depends on the length of
@@ -625,7 +625,7 @@ def hfft(a, n=None, axis=-1, norm=None, out=None):
     if n is None:
         n = (a.shape[axis] - 1) * 2
     new_norm = _swap_direction(norm)
-    output = irfft(conjugate(a), n, axis, norm=new_norm, out=None)
+    output = irfft(conjugate(a), n, axis, norm=new_norm, out=out)
     return output
 
 
@@ -1260,7 +1260,7 @@ def ifft2(a, s=None, axes=(-2, -1), norm=None, out=None):
            [0.+0.j,  1.+0.j,  0.+0.j,  0.+0.j]])
 
     """
-    return _raw_fftnd(a, s, axes, ifft, norm, out=None)
+    return _raw_fftnd(a, s, axes, ifft, norm, out=out)
 
 
 @array_function_dispatch(_fftn_dispatcher)
@@ -1520,7 +1520,7 @@ def irfftn(a, s=None, axes=None, norm=None, out=None):
 
     axes : sequence of ints, optional
         Axes over which to compute the inverse FFT. If not given, the last
-        `len(s)` axes are used, or all axes if `s` is also not specified.
+        ``len(s)`` axes are used, or all axes if `s` is also not specified.
         Repeated indices in `axes` means that the inverse transform over that
         axis is performed multiple times.
 
@@ -1690,4 +1690,4 @@ def irfft2(a, s=None, axes=(-2, -1), norm=None, out=None):
            [3., 3., 3., 3., 3.],
            [4., 4., 4., 4., 4.]])
     """
-    return irfftn(a, s, axes, norm, out=None)
+    return irfftn(a, s, axes, norm, out=out)

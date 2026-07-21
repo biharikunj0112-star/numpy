@@ -193,7 +193,7 @@ NpyIter_AdvancedNew(int nop, PyArrayObject **op_in, npy_uint32 flags,
 
     /* Allocate memory for the iterator */
     iter = (NpyIter*)
-                PyObject_Malloc(NIT_SIZEOF_ITERATOR(itflags, ndim, nop));
+                PyMem_Malloc(NIT_SIZEOF_ITERATOR(itflags, ndim, nop));
     if (iter == NULL) {
         return NULL;
     }
@@ -219,7 +219,7 @@ NpyIter_AdvancedNew(int nop, PyArrayObject **op_in, npy_uint32 flags,
                         flags,
                         op_flags, op_itflags,
                         &NIT_MASKOP(iter))) {
-        PyObject_Free(iter);
+        PyMem_Free(iter);
         return NULL;
     }
     /* Set resetindex to zero as well (it's just after the resetdataptr) */
@@ -537,7 +537,11 @@ NpyIter_Copy(NpyIter *iter)
 
     /* Allocate memory for the new iterator */
     size = NIT_SIZEOF_ITERATOR(itflags, ndim, nop);
-    newiter = (NpyIter*)PyObject_Malloc(size);
+    newiter = (NpyIter*)PyMem_Malloc(size);
+    if (newiter == NULL) {
+        PyErr_NoMemory();
+        return NULL;
+    }
 
     /* Copy the raw values to the new iterator */
     memcpy(newiter, iter, size);
@@ -713,7 +717,7 @@ NpyIter_Deallocate(NpyIter *iter)
     }
 
     /* Deallocate the iterator memory */
-    PyObject_Free(iter);
+    PyMem_Free(iter);
     return success;
 }
 
@@ -3437,6 +3441,15 @@ npyiter_allocate_transfer_functions(NpyIter *iter)
         }
         else {
             op_stride = strides[iop];
+        }
+
+        /*
+         * RemoveMultiIndex may coalesce a size-one inner axis, changing its
+         * zero stride.  Do not specialize for a stride that can change.
+         */
+        if ((itflags & NPY_ITFLAG_HASMULTIINDEX) &&
+                NAD_SHAPE(axisdata) == 1 && op_stride == 0) {
+            op_stride = NPY_MAX_INTP;
         }
 
         /*
